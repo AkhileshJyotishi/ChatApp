@@ -3,18 +3,18 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone";
 export default function Page() {
-    const [name, setName] = React.useState<any>("");
-    const [email, setEmail] = React.useState<any>("");
-    const [password, setPassword] = React.useState<any>("");
+    const [name, setName] = React.useState<string>("");
+    const [email, setEmail] = React.useState<string>("");
+    const [password, setPassword] = React.useState<string>("");
 
-    async function authenticationFunction() {
-        const authData = {
-            name: name,
-            email: email,
-            password: password
-        }
-        // const response = await axios.post("post url");
-    }
+    // async function authenticationFunction() {
+    //     const authData = {
+    //         name: name,
+    //         email: email,
+    //         password: password
+    //     }
+    //     // const response = await axios.post("post url");
+    // }
     React.useEffect(() => {
         const authData = {
             name: name,
@@ -27,21 +27,23 @@ export default function Page() {
 
     const [loading, setLoading] = useState(false);
 
-    const handleImageSubmit = async (selectedImage: any) => {
+    const handleImageSubmit = async () => {
         const formData = new FormData();
-        formData.append('profile', selectedImage);
-        setImageChoosed(selectedImage);
+        formData.append('profile', imageChoosed);
 
         try {
-            setLoading(true);
-            // const response = await axios.post(`${BASE_URL}/helpdesk/ProfilePicture`, formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data',
-            //         Authorization: `Bearer ${user.token}`
-            //     },
-            // });
+            const authData = {
+                name: name,
+                email: email,
+                password: password,
+                imagedata:formData
+            }
 
-            // console.log("Image uploaded successfully", response.data);
+
+            setLoading(true);
+            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`,authData );
+
+            console.log("Image uploaded successfully", response.data);
         } catch (error) {
             console.error('Error uploading image:', error);
         }
@@ -54,7 +56,7 @@ export default function Page() {
 
     const onDrop = useCallback((acceptedFiles: any) => {
         console.log('acceptedFiles',acceptedFiles[0]);
-        handleImageSubmit(acceptedFiles[0]);
+        setImageChoosed(acceptedFiles[0]);
     }, [])
 
 
@@ -200,7 +202,7 @@ export default function Page() {
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                             onClick={() => {
-                                authenticationFunction();
+                                handleImageSubmit();
                             }}
                         >
                             Create account
