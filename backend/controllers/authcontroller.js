@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 // const graphqlUrl = "http://localhost:4000";
 const axios = require("axios");
 // console.log(graphqlsave);
- const register = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { username, password, mail } = req.body;
     if (username && password && mail) {
