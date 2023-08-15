@@ -1,1 +1,9 @@
 POST http://localhost:5002/v1/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "sample",
+    "mail": "akhileshkyotishi1729@gmail.com",
+    "password":"1234567",
+    "repeat_password":"1234567"
+}

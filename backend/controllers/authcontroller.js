@@ -4,14 +4,14 @@ var jwt = require("jsonwebtoken");
 const usermodel = require("../models/usermodel");
 const bcrypt = require("bcryptjs");
 // const graphqlsave = require("../schema/sanityschema");
-const graphqlUrl = 'http://localhost:3000/graphql'; 
-const axios=require('axios')
+// const graphqlUrl = "http://localhost:4000";
+const axios = require("axios");
 // console.log(graphqlsave);
-const register = async (req, res) => {
+ const register = async (req, res) => {
   try {
-    const { username, password, email } = req.body;
-    if (username && password && email) {
-      const userexists = await usermodel.exists({ mail: email });
+    const { username, password, mail } = req.body;
+    if (username && password && mail) {
+      const userexists = await usermodel.exists({ mail });
       if (userexists) {
         return res.status(400).send({
           success: true,
@@ -23,21 +23,19 @@ const register = async (req, res) => {
       try {
         const hashpasswd = await bcrypt.hash(password, 10);
 
-        // const user = new usermodel({
-        //   username,
-        //   password: hashpasswd,
-        //   mail: email,
-        // });
-        // const reply = await user.save();
-    
-// how to use graphql here 
-  
+        const user = new usermodel({
+          username,
+          password: hashpasswd,
+          mail,
+        });
+        const reply = await user.save();
 
-       
+        // how to use graphql here
+
         return res.send({
           success: true,
           message: {
-            
+            data: reply,
           },
         });
       } catch (err) {
@@ -60,8 +58,6 @@ const register = async (req, res) => {
     return res.send(err);
   }
 };
-
-
 
 //login logic
 
