@@ -3,10 +3,49 @@ const mongoose = require("mongoose");
 var jwt = require("jsonwebtoken");
 const usermodel = require("../models/usermodel");
 const bcrypt = require("bcryptjs");
-// const graphqlsave = require("../schema/sanityschema");
-// const graphqlUrl = "http://localhost:4000";
 const axios = require("axios");
-// console.log(graphqlsave);
+const { request } = require("express");
+const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET 
+});
+
+
+const profileUploadfn = async (req, res) => {
+  const userId = req.user._id.toString();
+  try {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+          public_id: `${userId}_profile`,
+          width: 500,
+          height: 500,
+          crop: 'fill'
+      })
+      const user = await usermodel.findOneAndUpdate(
+          { _id: userId },
+          { $set: { photourl: result.secure_url } },
+          { new: true, upsert: true }
+      )
+      if (user && result) {
+          res.status(200).json(result.secure_url);
+      }
+  }
+  catch (err) {
+      res.status(400).json(err.message);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 const register = async (req, res) => {
   try {
     const { username, password, mail } = req.body;
@@ -21,14 +60,39 @@ const register = async (req, res) => {
         });
       }
       try {
+        // console.log(req.file)
         const hashpasswd = await bcrypt.hash(password, 10);
+        var reply;
+        // let photourl;
+        if(req.file.path){
+  // profileUploadfn(req,res);
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    public_id: `doraemon`,
+    width: 500,
+    height: 500,
+    crop: 'fill'
+})
+  const user = new usermodel({
+    username,
+    password: hashpasswd,
+    mail,
+    photourl:result.secure_url
+  });
+   reply = await user.save();
+}
+else {
+  photourl=""
+  // console.log(reply)
+  console.log(hashpasswd)
 
-        const user = new usermodel({
-          username,
-          password: hashpasswd,
-          mail,
-        });
-        const reply = await user.save();
+  const user = new usermodel({
+    username,
+    password: hashpasswd,
+    mail,
+    photourl
+  });
+   reply = await user.save();
+}
 
         // how to use graphql here
 
@@ -39,7 +103,7 @@ const register = async (req, res) => {
           },
         });
       } catch (err) {
-        return res.send({
+        return res.status(400).send({
           success: false,
           message: {
             data: err,

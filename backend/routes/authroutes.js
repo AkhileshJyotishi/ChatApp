@@ -14,6 +14,7 @@ const registeruserschema = Joi.object({
   mail: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
     .required(),
+    photourl:Joi.string()
 });
 const loginuserschema = Joi.object({
   username: Joi.string().min(3).max(15).required(),

@@ -3,7 +3,7 @@ content-type: application/json
 
 {
     "username": "sample",
-    "mail": "akhileshkyotishi1729@gmail.com",
+    "mail": "akhileshjyotishi1729@gmail.com",
     "password":"1234567",
     "repeat_password":"1234567"
 }
