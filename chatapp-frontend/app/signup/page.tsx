@@ -31,6 +31,10 @@ export default function Page() {
                 }
             } 
             );
+            // const tokencame = await response.data.message.token;
+            // const data = await response.data.message.data
+            // setAuth({...data,token:tokencame});
+            // router.push('/dashboard')
 
             console.log("Image uploaded successfully", response.data);
         } catch (error) {
