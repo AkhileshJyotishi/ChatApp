@@ -5,6 +5,7 @@ const usermodel = require("../models/usermodel");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 const { request } = require("express");
+// const cookies=require('cookoe')
 const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 cloudinary.config({
