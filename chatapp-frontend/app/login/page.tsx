@@ -17,13 +17,11 @@ export default function Page() {
 
         try {
             setLoading(true);
-            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`,formData
-            ,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            } 
+            const response = await axios.post(`http://localhost:5002/v1/api/auth/login`,{
+                mail:email,password
+            }
+            
+            
             );
 
             console.log("Image uploaded successfully", response.data);
