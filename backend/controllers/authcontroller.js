@@ -13,7 +13,6 @@ cloudinary.config({
   api_secret: process.env.API_SECRET
 });
 
-
 const profileUploadfn = async (req, res) => {
   const userId = req.user._id.toString();
   try {
@@ -35,18 +34,10 @@ const profileUploadfn = async (req, res) => {
   catch (err) {
     res.status(400).json(err.message);
   }
-}
-
-
-
-
-
-
-
-
-
+};
 
 const register = async (req, res) => {
+  console.log(req.body);
   try {
     // console.log("helo",req.file);
     const { username, password, mail } = req.body;
