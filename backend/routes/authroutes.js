@@ -25,23 +25,23 @@ const registeruserschema = Joi.object({
   mail: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
     .required(),
-    photourl: Joi.object({
-      fieldname: Joi.string(),
-      originalname: Joi.string(),
-      encoding: Joi.string(),
-      mimetype: Joi.string(),
-      destination: Joi.string(),
-      filename: Joi.string(),
-      path: Joi.string(),
-      size: Joi.number()
-    }).required()
+  profile: Joi.object({
+    fieldname: Joi.string(),
+    originalname: Joi.string(),
+    encoding: Joi.string(),
+    mimetype: Joi.string(),
+    destination: Joi.string(),
+    filename: Joi.string(),
+    path: Joi.string(),
+    size: Joi.number()
+  })
 });
 const loginuserschema = Joi.object({
   username: Joi.string().min(3).max(15).required(),
   password: Joi.string().min(6).required(),
 });
 
-router.post("/register", upload.single('profile'),validator.body(registeruserschema), register);
+router.post("/register", upload.single('profile'), validator.body(registeruserschema), register);
 // router.post("/register", validator.body(registeruserschema), register);
 router.post("/login", validator.body(loginuserschema), login);
 

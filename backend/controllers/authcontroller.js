@@ -24,7 +24,7 @@ const profileUploadfn = async (req, res) => {
     })
     const user = await usermodel.findOneAndUpdate(
       { _id: userId },
-      { $set: { photourl: result.secure_url } },
+      { $set: { profile: result.secure_url } },
       { new: true, upsert: true }
     )
     if (user && result) {
@@ -56,7 +56,7 @@ const register = async (req, res) => {
         // console.log(req.file)
         const hashpasswd = await bcrypt.hash(password, 10);
         var reply;
-        // let photourl;
+        let profile;
         if (req.file.path) {
           // profileUploadfn(req,res);
           const result = await cloudinary.uploader.upload(req.file.path, {
@@ -70,12 +70,12 @@ const register = async (req, res) => {
             username,
             password: hashpasswd,
             mail,
-            photourl: result.secure_url
+            profile: result.secure_url
           });
           reply = await user.save();
         }
         else {
-          photourl = ""
+          profile = ""
           // console.log(reply)
           console.log(hashpasswd)
 
@@ -83,7 +83,7 @@ const register = async (req, res) => {
             username,
             password: hashpasswd,
             mail,
-            photourl
+            profile
           });
           reply = await user.save();
         }
