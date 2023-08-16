@@ -1,0 +1,22 @@
+const jwt=require('jsonwebtoken')
+require("dotenv").config();
+
+
+const verifytokensocket=(socket,next)=>{
+    const token= socket.handshake.auth?.token;
+
+    try{
+        const decoded=jwt.verify(token,process.env.JWTSecretKey)
+        socket.user=decoded
+
+    }
+    catch(err){
+        const socketerror=new Error("Not Authorized!")
+        return next(socketerror)
+    }
+    next();
+    
+}
+module.exports={
+    verifytokensocket
+}
