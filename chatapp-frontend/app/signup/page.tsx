@@ -7,41 +7,25 @@ export default function Page() {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
-    // async function authenticationFunction() {
-    //     const authData = {
-    //         name: name,
-    //         email: email,
-    //         password: password
-    //     }
-    //     // const response = await axios.post("post url");
-    // }
-    React.useEffect(() => {
-        const authData = {
-            name: name,
-            email: email,
-            password: password
-        }
-        console.log("authData", authData);
-        // authenticationFunction(authData);
-    }, [name, email, password]);
-
     const [loading, setLoading] = useState(false);
 
-    const handleImageSubmit = async () => {
+    const handleImageSubmit = async (imageChoosed:any) => {
         const formData = new FormData();
         formData.append('profile', imageChoosed);
+        formData.append('username',name);
+        formData.append('password',password);
+        formData.append('mail',email);
 
         try {
-            const authData = {
-                name: name,
-                email: email,
-                password: password,
-                imagedata:formData
-            }
-
-
             setLoading(true);
-            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`,authData );
+            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`,formData
+            ,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            } 
+            );
 
             console.log("Image uploaded successfully", response.data);
         } catch (error) {
@@ -55,12 +39,11 @@ export default function Page() {
     const [imageChoosed, setImageChoosed] = useState<any>(null);
 
     const onDrop = useCallback((acceptedFiles: any) => {
-        console.log('acceptedFiles',acceptedFiles[0]);
         setImageChoosed(acceptedFiles[0]);
     }, [])
 
 
-    console.log("Image choosed", imageChoosed);
+    // console.log("Image choosed", imageChoosed);
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
     let lableStyles = {};
     if (imageChoosed !== null) {
@@ -202,7 +185,7 @@ export default function Page() {
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                             onClick={() => {
-                                handleImageSubmit();
+                                handleImageSubmit(imageChoosed);
                             }}
                         >
                             Create account
