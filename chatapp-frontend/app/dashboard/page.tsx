@@ -1,7 +1,9 @@
 'use client'
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
+import Connectwithsocketserver from '../realtimeconnection/socketconnection'
+// import connect
 
 export default function Page() {
     const { auth, setAuth } = useContext(AuthContext);
@@ -10,6 +12,10 @@ export default function Page() {
         router.push('/login');
         return null;
     }
+    useEffect(()=>{
+        Connectwithsocketserver();
+
+    })
     return (
         <div>
             <>
