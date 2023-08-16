@@ -157,6 +157,11 @@ const login = async (req, res) => {
       const passmatch =await bcrypt.compare(password, userexists.password)
       if(passmatch){
         console.log("passmatch",passmatch)
+        const userData = {
+          username:userexists.username,
+          email:userexists.mail,
+          profile:userexists.profile
+        }
 
         const token = jwt.sign(
           {
@@ -170,7 +175,7 @@ const login = async (req, res) => {
         return res.send({
           success: true,
           message: {
-            data: "user successfully logged in",
+            data: userData,
             token,
           },
         });
