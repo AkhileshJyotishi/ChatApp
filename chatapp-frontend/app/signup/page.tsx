@@ -2,9 +2,11 @@
 import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone";
 export default function Page() {
+    const router = useRouter();
     const {auth,setAuth} = useContext(AuthContext);
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
@@ -56,6 +58,12 @@ export default function Page() {
             opacity: '0.6'
         }
     }
+
+    if(auth!=null){
+        router.push('/dashboard');
+        return  null;
+    }
+
 
     return (
         <main className="w-full h-screen overflow-hidden flex">

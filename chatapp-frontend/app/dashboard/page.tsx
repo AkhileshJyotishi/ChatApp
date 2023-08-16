@@ -1,7 +1,15 @@
 'use client'
-import React from 'react'
+import { AuthContext } from '@/contexts/authContext';
+import { useRouter } from 'next/navigation';
+import React, { useContext } from 'react'
 
-export default function page() {
+export default function Page() {
+    const { auth, setAuth } = useContext(AuthContext);
+    const router = useRouter();
+    if(auth==null){
+        router.push('/login');
+        return null;
+    }
     return (
         <div>
             <>
@@ -57,7 +65,7 @@ export default function page() {
                                             <span className="sr-only">Open user menu</span>
                                             <img
                                                 className="w-8 h-8 rounded-full"
-                                                src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                                                src={`${auth.profile}`}
                                                 alt="user photo"
                                                 onClick={()=>{
                                                     document.getElementById("dropdown-user")?.classList.toggle("hidden");
@@ -74,13 +82,13 @@ export default function page() {
                                                 className="text-sm text-gray-900 dark:text-white"
                                                 role="none"
                                             >
-                                                Neil Sims
+                                                {auth.username}
                                             </p>
                                             <p
                                                 className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                                 role="none"
                                             >
-                                                neil.sims@flowbite.com
+                                                {auth.email}
                                             </p>
                                         </div>
                                         <ul className="py-1" role="none">
@@ -112,13 +120,16 @@ export default function page() {
                                                 </a>
                                             </li>
                                             <li>
-                                                <a
-                                                    href="#"
+                                                <button
                                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                     role="menuitem"
+                                                    onClick={()=>{
+                                                        localStorage.removeItem('user');
+                                                        router.push("/login");
+                                                    }}
                                                 >
                                                     Sign out
-                                                </a>
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>

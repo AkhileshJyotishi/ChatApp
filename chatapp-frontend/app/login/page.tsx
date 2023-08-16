@@ -2,34 +2,41 @@
 import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from "react"
-import { useDropzone } from "react-dropzone";
 export default function Page() {
-    const {auth,setAuth} = useContext(AuthContext);
+    const router = useRouter();
+    const { auth, setAuth } = useContext(AuthContext);
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
     const [loading, setLoading] = useState(false);
-
     const handleImageSubmit = async () => {
         const formData = new FormData();
-        formData.append('password',password);
-        formData.append('mail',email);
+        formData.append('password', password);
+        formData.append('mail', email);
 
         try {
             setLoading(true);
-            const response = await axios.post(`http://localhost:5002/v1/api/auth/login`,{
-                mail:email,password
+            const response = await axios.post(`http://localhost:5002/v1/api/auth/login`, {
+                mail: email, password
             }
-            
-            
             );
-
-            console.log("Image uploaded successfully", response.data);
+            const tokencame = await response.data.message.token;
+            const data = await response.data.message.data
+            setAuth({...data,token:tokencame});
+            router.push('/dashboard')
+            console.log("Logged in successfully", response.data.message);
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error Login:', error);
         }
+        setLoading(false);
+    }
+
+    if(auth!=null){
+        router.push('/dashboard');
+        return  null;
     }
 
 
@@ -154,7 +161,9 @@ export default function Page() {
                                 handleImageSubmit();
                             }}
                         >
-                            Login
+                            {
+                                loading ? <p>Loading...</p> : <p>Login</p>
+                            }
                         </button>
                     </form>
                 </div>
