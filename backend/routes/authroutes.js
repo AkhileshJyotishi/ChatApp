@@ -73,12 +73,12 @@ const registeruserschema = Joi.object({
   })
 });
 const loginuserschema = Joi.object({
-  username: Joi.string().min(3).max(15).required(),
+  mail:    Joi.string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } }).required(),
   password: Joi.string().min(6).required(),
 });
 
 router.post("/register", upload.single('profile'), validator.body(registeruserschema), register);
 // router.post("/register", validator.body(registeruserschema), register);
-router.post("/login",requireauth(), validator.body(loginuserschema), login);
+router.post("/login", validator.body(loginuserschema), login);
 
 module.exports = router;

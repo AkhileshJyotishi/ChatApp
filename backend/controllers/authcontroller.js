@@ -106,7 +106,6 @@ const register = async (req, res) => {
               token,
             },
           });
-          
 
           // res.json({
           //   success:true,
@@ -145,42 +144,55 @@ const register = async (req, res) => {
 };
 
 //login logic
+//login logic
 
 const login = async (req, res) => {
+  console.log("login khul gya")
   try {
     const { mail, password } = req.body;
     // decryptpasswd=
-    const userexists = await usermodel.exists({ mail });
+    const userexists = await usermodel.findOne({ mail });
     console.log(userexists);
-    if (userexists && bcrypt.compare(password, userexists.password)) {
-      const token = jwt.sign(
-        {
-          data: user,
-        },
-        process.env.JWTSecretKey,
-        { expiresIn: "1h" }
-      );
-      // const reply2=await usermodel.
-      return res.send({
-        success:true,
-        message:{
-          data:"user successfully logged in",
-          token
-        }
-      })
+    if (userexists) {
+      const passmatch =await bcrypt.compare(password, userexists.password)
+      if(passmatch){
+        console.log("passmatch",passmatch)
 
-
+        const token = jwt.sign(
+          {
+            data: userexists,
+          },
+          process.env.JWTSecretKey,
+          { expiresIn: "1h" }
+        );
+        // const reply2=await usermodel.
+        console.log("response bhejna h ")
+        return res.send({
+          success: true,
+          message: {
+            data: "user successfully logged in",
+            token,
+          },
+        });
+      }else {
+        return res.json({
+          success: false,
+          message: "password not matched",
+        });
+      }
 
       // jwt.sign()
     } else {
-      res.send({
+      return res.json({
         success: false,
+        message: "user does not exist try signup instead",
       });
     }
-  } catch (err) {}
+  } catch (err) {
   return res.send({
-    message: true,
+    message: err,
   });
+}
 };
 
 module.exports = {
