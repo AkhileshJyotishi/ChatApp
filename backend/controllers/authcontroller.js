@@ -5,12 +5,12 @@ const usermodel = require("../models/usermodel");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 const { request } = require("express");
-const cloudinary = require('cloudinary').v2;
-require('dotenv').config();
+const cloudinary = require("cloudinary").v2;
+require("dotenv").config();
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET
+  api_secret: process.env.API_SECRET,
 });
 
 const profileUploadfn = async (req, res) => {
@@ -20,18 +20,17 @@ const profileUploadfn = async (req, res) => {
       public_id: `${userId}_profile`,
       width: 500,
       height: 500,
-      crop: 'fill'
-    })
+      crop: "fill",
+    });
     const user = await usermodel.findOneAndUpdate(
       { _id: userId },
       { $set: { profile: result.secure_url } },
       { new: true, upsert: true }
-    )
+    );
     if (user && result) {
       res.status(200).json(result.secure_url);
     }
-  }
-  catch (err) {
+  } catch (err) {
     res.status(400).json(err.message);
   }
 };
@@ -39,9 +38,9 @@ const profileUploadfn = async (req, res) => {
 const register = async (req, res) => {
   console.log(req.body);
   try {
-    // console.log("helo",req.file);
+    console.log("helo", req.file);
     const { username, password, mail } = req.body;
-    console.log(username,password,mail);
+    console.log(username, password, mail);
     if (username && password && mail) {
       const userexists = await usermodel.exists({ mail });
       if (userexists) {
@@ -63,37 +62,65 @@ const register = async (req, res) => {
             public_id: `doraemon`,
             width: 500,
             height: 500,
-            crop: 'fill'
-          })
-          console.log("photo path",result);
+            crop: "fill",
+          });
+          // console.log("photo path",result);
           const user = new usermodel({
             username,
             password: hashpasswd,
             mail,
-            profile: result.secure_url
+            profile: result.secure_url,
           });
           reply = await user.save();
-        }
-        else {
-          profile = ""
+          console.log("working");
+          var token = jwt.sign(
+            {
+              data: user,
+            },
+            process.env.JWTSecretKey,
+            { expiresIn: "1h" }
+          );
+        } else {
+          profile = "";
           // console.log(reply)
-          console.log(hashpasswd)
+          // console.log(hashpasswd)
 
           const user = new usermodel({
             username,
             password: hashpasswd,
             mail,
-            profile
+            profile,
           });
           reply = await user.save();
-        }
+          const token = jwt.sign(
+            {
+              data: user,
+            },
+            process.env.JWTSecretKey,
+            { expiresIn: "1h" }
+          );
+          return res.send({
+            success: true,
+            message: {
+              data: reply,
+              token,
+            },
+          });
+          
 
+          // res.json({
+          //   success:true,
+          //   token
+          // })
+        }
+        console.log("working ke baad");
         // how to use graphql here
 
         return res.send({
           success: true,
           message: {
             data: reply,
+            token,
           },
         });
       } catch (err) {
@@ -104,8 +131,7 @@ const register = async (req, res) => {
           },
         });
       }
-    } 
-    else {
+    } else {
       return res.status(400).send({
         success: false,
         message: {
@@ -120,7 +146,38 @@ const register = async (req, res) => {
 
 //login logic
 
-const login = (req, res) => {
+const login = async (req, res) => {
+  try {
+    const { mail, password } = req.body;
+    // decryptpasswd=
+    const userexists = await usermodel.exists({ mail });
+    console.log(userexists);
+    if (userexists && bcrypt.compare(password, userexists.password)) {
+      const token = jwt.sign(
+        {
+          data: user,
+        },
+        process.env.JWTSecretKey,
+        { expiresIn: "1h" }
+      );
+      // const reply2=await usermodel.
+      return res.send({
+        success:true,
+        message:{
+          data:"user successfully logged in",
+          token
+        }
+      })
+
+
+
+      // jwt.sign()
+    } else {
+      res.send({
+        success: false,
+      });
+    }
+  } catch (err) {}
   return res.send({
     message: true,
   });
@@ -150,3 +207,23 @@ module.exports = {
 // pwa
 // graphql
 //
+// const jwt = require("jsonwebtoken");
+// const userModle = require("../Modles/userModle");
+
+// const RequireAuth = async(req,res,next)=>{
+//     const {authorization} = req.headers;
+//     if(!authorization){
+//        return res.status(401).json("Authorization requires token");
+//     }
+//     const token = authorization.split(' ')[1];
+//     try{
+//         const {_id} = jwt.verify(token,process.env.SECRET_KEY);
+//         req.user = await userModle.findOne({_id}).select('_id');
+//         next();
+//     }
+//     catch(err){
+//         console.log(err);
+//         res.status(401).json("request is not authorized");
+//     }
+// }
+// module.exports = RequireAuth;

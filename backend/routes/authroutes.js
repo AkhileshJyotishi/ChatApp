@@ -1,6 +1,7 @@
 const express = require("express");
 const Joi = require("joi");
 const multer = require('multer');
+require("dotenv").config();
 
 const storage = multer.diskStorage({});
 const fileFilter = (req, file, cb) => {
@@ -15,8 +16,43 @@ const upload = multer({ storage, fileFilter });
 const router = express.Router();
 // const app = express()
 const { login, register } = require("../controllers/authcontroller");
+const usermodel = require("../models/usermodel");
 
 const validator = require("express-joi-validation").createValidator({});
+
+
+
+const requireauth = async(req,res,next)=>{
+      const {authorization} = req.headers;
+      if(!authorization){
+         return res.status(401).json("Authorization requires token");
+      }
+      // const token = authorization.split(' ')[1];
+      try{
+          const {_id} = jwt.verify(token,process.env.SECRET_KEY);
+          //ambiguity
+          req.user = await usermodel.findOne({_id}).select('_id');
+          next();
+      }
+      catch(err){
+          console.log(err);
+          res.status(401).json("request is not authorized");
+    }
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const registeruserschema = Joi.object({
   username: Joi.string().min(3).max(15).required(),
@@ -43,6 +79,6 @@ const loginuserschema = Joi.object({
 
 router.post("/register", upload.single('profile'), validator.body(registeruserschema), register);
 // router.post("/register", validator.body(registeruserschema), register);
-router.post("/login", validator.body(loginuserschema), login);
+router.post("/login",requireauth(), validator.body(loginuserschema), login);
 
 module.exports = router;
