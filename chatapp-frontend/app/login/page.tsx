@@ -2,6 +2,8 @@
 import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
+// import Cookies from 'js-cookie';
+import { useCookies } from "react-cookie";
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from "react"
 export default function Page() {
@@ -12,6 +14,13 @@ export default function Page() {
     const [password, setPassword] = React.useState<string>("");
 
     const [loading, setLoading] = useState(false);
+    const [cookies, setCookie] = useCookies(["user"]);
+
+    function handleCookie(token: String) {
+        setCookie("user", token, {
+            path: "/"
+        });
+    }
     const handleImageSubmit = async () => {
         const formData = new FormData();
         formData.append('password', password);
@@ -24,8 +33,10 @@ export default function Page() {
             }
             );
             const tokencame = await response.data.message.token;
+            // Cookies.set('token',tokencame);
+            handleCookie(tokencame);
             const data = await response.data.message.data
-            setAuth({...data,token:tokencame});
+            setAuth({ ...data, token: tokencame });
             router.push('/dashboard')
             console.log("Logged in successfully", response.data.message);
         } catch (error) {
@@ -34,9 +45,9 @@ export default function Page() {
         setLoading(false);
     }
 
-    if(auth!=null){
+    if (auth != null) {
         router.push('/dashboard');
-        return  null;
+        return null;
     }
 
 
