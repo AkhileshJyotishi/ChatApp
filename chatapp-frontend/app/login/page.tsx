@@ -1,9 +1,11 @@
 'use client'
+import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useContext, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone";
 export default function Page() {
+    const {auth,setAuth} = useContext(AuthContext);
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
