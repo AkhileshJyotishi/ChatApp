@@ -46,7 +46,7 @@ export default function page() {
                                 </a>
                             </div>
                             <div className="flex items-center">
-                                <div className="flex items-center ml-3">
+                                <div className="flex items-center ml-3 relative">
                                     <div>
                                         <button
                                             type="button"
@@ -59,11 +59,14 @@ export default function page() {
                                                 className="w-8 h-8 rounded-full"
                                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
                                                 alt="user photo"
+                                                onClick={()=>{
+                                                    document.getElementById("dropdown-user")?.classList.toggle("hidden");
+                                                }}
                                             />
                                         </button>
                                     </div>
                                     <div
-                                        className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                                        className="z-50 hidden  my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-5 right-0"
                                         id="dropdown-user"
                                     >
                                         <div className="px-4 py-3" role="none">
