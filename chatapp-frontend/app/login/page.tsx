@@ -10,10 +10,8 @@ export default function Page() {
 
     const [loading, setLoading] = useState(false);
 
-    const handleImageSubmit = async (imageChoosed:any) => {
+    const handleImageSubmit = async () => {
         const formData = new FormData();
-        formData.append('profile', imageChoosed);
-        formData.append('username',name);
         formData.append('password',password);
         formData.append('mail',email);
 
@@ -32,28 +30,8 @@ export default function Page() {
         } catch (error) {
             console.error('Error uploading image:', error);
         }
-        setLoading(false);
-        // setImageChoosed(null);
     }
 
-
-    const [imageChoosed, setImageChoosed] = useState<any>(null);
-
-    const onDrop = useCallback((acceptedFiles: any) => {
-        setImageChoosed(acceptedFiles[0]);
-    }, [])
-
-
-    // console.log("Image choosed", imageChoosed);
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-    let lableStyles = {};
-    if (imageChoosed !== null) {
-        lableStyles = {
-            pointerEvents: 'none',
-            cursor: "default",
-            opacity: '0.6'
-        }
-    }
 
     return (
         <main className="w-full flex">
@@ -173,7 +151,7 @@ export default function Page() {
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                             onClick={() => {
-                                handleImageSubmit(imageChoosed);
+                                handleImageSubmit();
                             }}
                         >
                             Login
