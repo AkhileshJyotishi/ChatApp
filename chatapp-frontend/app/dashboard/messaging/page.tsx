@@ -1,12 +1,20 @@
 'use client'
 import { AuthContext } from '@/contexts/authContext';
-import React from 'react'
+import React, { useContext, useState } from 'react'
 
 export default function Page() {
     const friends = [
-        "Hello", "Ramesh"
+        {
+            name:"Hello",
+            imageUrl:""
+        }, 
+        {
+            name:"Ramesh",
+            imageUrl:""
+        }
     ]
-    const { auth, setAuth } = React.useContext(AuthContext);
+    const { auth, setAuth } = useContext(AuthContext);
+    const [activeFriend, setActiveFriend] = useState<any>(null);
     return (
         <div className='flex flex-col h-screen w-screen'>
             <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -135,16 +143,20 @@ export default function Page() {
                 </div>
             </nav>
             <div className='bg-yellow-50 flex-grow flex h-[calc(100vh-56px)] overflow-y-auto'>
-                {/* Users */}
+                {/* FriendList */}
                 <div className='h-full p-3 w-[20%] text-black'>
                     <div className=' bg-teal-50 h-full flex flex-col'>
-                        <input type="text" className='w-full border-none ' placeholder="Search for friends" />
-                        <div className='flex-grow bg-red-100 overflow-y-auto'>
+                        <input type="text" className='w-full border-none' placeholder="Search for friends" />
+                        <div className='flex-grow bg-red-100 overflow-y-auto  border-t-gray-300 border-t'>
                             {
-                                friends.map((friend,key)=>{
-                                    return(
-                                        <div key={key} className='m-2 p-3 rounded bg-white'>
-                                            <h2>{friend}</h2>
+                                friends.map((friend, key) => {
+                                    return (
+                                        <div key={key} className='border-b-gray-300 border-b p-3 hover:bg-gray-50 bg-white'
+                                            onClick={() => {
+                                                setActiveFriend(friend);
+                                            }}
+                                        >
+                                            <h2>{friend.name}</h2>
                                         </div>
                                     )
                                 })
@@ -153,9 +165,43 @@ export default function Page() {
                     </div>
                 </div>
                 {/* Messages */}
-                <div className='h-full p-3 w-[60%] text-black'>
-                    <div className=' bg-teal-50 h-full'>
-                        Hello
+                <div className='h-full p-2 w-[60%] text-black'>
+                    <div className=' bg-teal-50 h-full flex flex-col'>
+                        {
+                            activeFriend !== null ?
+                            <>
+                                    {/* Header */}
+                                    <div className='bg-white w-full p-3 flex justify-between items-center'>
+                                        <div className='flex gap-5 items-center'>
+                                            <div>
+                                                <img src={activeFriend.image} alt="" width={'48'} height={'48'} className='rounded-full' />
+                                            </div>
+                                            <div>
+                                                <p><b>{activeFriend?.name}</b></p>
+                                            </div>
+                                        </div>
+                                        <div className='flex gap-3'>
+                                            <button>video call</button>
+                                        </div>
+                                    </div>
+                                    {/* Chat */}
+                                    <div className='flex-grow overflow-y-auto'>
+                                        Hello<br></br>
+                                    </div>
+                                    {/* Send Message */}
+                                    <div className='flex'>
+                                        <input type="text" className='flex-grow' placeholder='Type a message' />
+                                        <button className='p-2'>Send</button>
+                                    </div>
+                                </>
+                            
+                                
+
+                                :
+                                <p>
+                                    Select some person to chat
+                                </p>
+                        }
                     </div>
                 </div>
                 {/* Active Friends */}
