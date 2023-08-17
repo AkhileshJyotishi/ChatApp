@@ -1,5 +1,4 @@
 'use client'
-import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
 import React, { useContext,useReducer, useEffect } from 'react'
 import io from "socket.io-client";
@@ -51,7 +50,7 @@ export default function Page() {
     },[])
     return (
         <div>
-            <>
+            {auth && <>
                 <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                     <div className="px-3 py-3 lg:px-5 lg:pl-3">
                         <div className="flex items-center justify-between">
@@ -62,7 +61,7 @@ export default function Page() {
                                     aria-controls="logo-sidebar"
                                     type="button"
                                     className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                                    onClick={()=>{
+                                    onClick={() => {
                                         document.getElementById('dropdown-user')?.classList.toggle('hidden');
                                     }}
                                 >
@@ -106,7 +105,7 @@ export default function Page() {
                                                 className="w-8 h-8 rounded-full"
                                                 src={`${auth.profile}`}
                                                 alt="user photo"
-                                                onClick={()=>{
+                                                onClick={() => {
                                                     document.getElementById("dropdown-user")?.classList.toggle("hidden");
                                                 }}
                                             />
@@ -162,9 +161,9 @@ export default function Page() {
                                                 <button
                                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                                     role="menuitem"
-                                                    onClick={()=>{
+                                                    onClick={() => {
                                                         localStorage.removeItem('user');
-                                                        router.push("/login");
+                                                        setAuth(null);
                                                     }}
                                                 >
                                                     Sign out
@@ -211,8 +210,7 @@ export default function Page() {
                 <div className="p-4 ">
                    
                 </div>
-            </>
-
+            </>}
         </div>
     )
 }

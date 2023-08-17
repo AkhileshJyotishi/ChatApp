@@ -1,10 +1,10 @@
 'use client'
-import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone";
+import { AuthContext } from '../../contexts/authContext';
 export default function Page() {
     const router = useRouter();
     const {auth,setAuth} = useContext(AuthContext);
@@ -31,6 +31,10 @@ export default function Page() {
                 }
             } 
             );
+            // const tokencame = await response.data.message.token;
+            // const data = await response.data.message.data
+            // setAuth({...data,token:tokencame});
+            // router.push('/dashboard')
 
             console.log("Image uploaded successfully", response.data);
         } catch (error) {

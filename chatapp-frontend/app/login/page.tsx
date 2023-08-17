@@ -1,11 +1,11 @@
 'use client'
-import { AuthContext } from '@/contexts/authContext';
 import axios from 'axios';
 import Link from 'next/link';
 // import Cookies from 'js-cookie';
 import { useCookies } from "react-cookie";
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useContext, useEffect, useState } from "react"
+import { AuthContext } from '../../contexts/authContext';
 export default function Page() {
     const router = useRouter();
     const { auth, setAuth } = useContext(AuthContext);
@@ -15,6 +15,15 @@ export default function Page() {
 
     const [loading, setLoading] = useState(false);
     const [cookies, setCookie] = useCookies(["user"]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (error != null) {
+            setTimeout(() => {
+                setError(null);
+            }, 3000)
+        }
+    }, [error])
 
     function handleCookie(token: String) {
         setCookie("user", token, {
@@ -34,11 +43,15 @@ export default function Page() {
             );
             const tokencame = await response.data.message.token;
             // Cookies.set('token',tokencame);
-            handleCookie(tokencame);
+            // handleCookie(tokencame);
             const data = await response.data.message.data
-            setAuth({ ...data, token: tokencame });
-            router.push('/dashboard')
-            console.log("Logged in successfully", response.data.message);
+            if (tokencame) {
+                setAuth({ ...data, token: tokencame });
+                router.push('/dashboard')
+                console.log("Logged in successfully", response.data.message);
+            } else {
+                setError(response.data.message);
+            }
         } catch (error) {
             console.error('Error Login:', error);
         }
@@ -167,6 +180,7 @@ export default function Page() {
                                 }}
                             />
                         </div>
+                        {error && <p className='text-dm text-red-600'>*{error}</p>}
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                             onClick={() => {
