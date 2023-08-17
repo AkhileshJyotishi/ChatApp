@@ -1,0 +1,12 @@
+signalling server=help to exchange necessary info to establish connection between users,we can use socket, httprequset
+
+turn server =traversal using relay net and its a protocol for relaying network traffic
+it works when stun server
+
+stun server is giving us the ice candidates details which contain the user internet connection information
+
+ICE candidate = information about internet connectoion , typically user send its best candidat first but generally they are UDP
+
+Session description protocol===
+                                format to describe multimedia communication sessions for purposes of session announcement and 
+                                session invitation ,, it contain timing information of audio and video and their codecs
