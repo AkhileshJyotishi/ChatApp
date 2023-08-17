@@ -4,6 +4,7 @@ import React, { useContext,useReducer, useEffect } from 'react'
 import io from "socket.io-client";
 import Snackbar from '@mui/material/Snackbar'
 import {reducer,initialstate} from '../reducers/reducers'
+import { AuthContext } from '@/contexts/authContext';
 
 // import Connectwithsocketserver from '../realtimeconnection/socketconnection'
 // import connect
