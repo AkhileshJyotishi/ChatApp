@@ -7,45 +7,64 @@ import { useDropzone } from "react-dropzone";
 import { AuthContext } from '../../contexts/authContext';
 export default function Page() {
     const router = useRouter();
-    const {auth,setAuth} = useContext(AuthContext);
+    const { auth, setAuth } = useContext(AuthContext);
     const [name, setName] = React.useState<string>("");
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
-
+    const [imageChoosed, setImageChoosed] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        if (error != null) {
+            setTimeout(() => {
+                setError(null);
+            }, 3000)
+        }
+    }, [error])
+    useEffect(() => {
+        if (auth != null) {
+            router.push('/dashboard/messaging');
+        }
+    }, [auth])
+    window.auth = auth;
 
-    const handleImageSubmit = async (imageChoosed:any) => {
+    const handleImageSubmit = async (imageChoosed: any) => {
         const formData = new FormData();
         formData.append('profile', imageChoosed);
-        formData.append('username',name);
-        formData.append('password',password);
-        formData.append('mail',email);
-
+        formData.append('username', name);
+        formData.append('password', password);
+        formData.append('mail', email);
         try {
             setLoading(true);
-            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`,formData
-            ,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+            const response = await axios.post(`http://localhost:5002/v1/api/auth/register`, formData
+                ,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 }
-            } 
             );
-            // const tokencame = await response.data.message.token;
-            // const data = await response.data.message.data
-            // setAuth({...data,token:tokencame});
-            // router.push('/dashboard')
 
-            console.log("Image uploaded successfully", response.data);
-        } catch (error) {
+            console.log("response data", response.data);
+            const tokencame = await response.data.message.token;
+            const data = await response.data.message.data
+            if (tokencame) {
+                setAuth({ ...data, token: tokencame });
+                router.push('/dashboard/messaging')
+                console.log("Logged in successfully", response.data.message);
+            } else {
+                setError(response.data.message);
+            }
+
+        } catch (error: any) {
             console.error('Error uploading image:', error);
+            setError(error.response.data?.message?.data || error.response.data)
         }
         setLoading(false);
         // setImageChoosed(null);
     }
 
 
-    const [imageChoosed, setImageChoosed] = useState<any>(null);
 
     const onDrop = useCallback((acceptedFiles: any) => {
         setImageChoosed(acceptedFiles[0]);
@@ -62,12 +81,6 @@ export default function Page() {
             opacity: '0.6'
         }
     }
-
-    if(auth!=null){
-        router.push('/dashboard');
-        return  null;
-    }
-
 
     return (
         <main className="w-full h-screen overflow-hidden flex">
@@ -101,7 +114,7 @@ export default function Page() {
                 </div>
             </div>
             <div className="flex-1 flex items-center justify-center">
-                <div className="w-full max-w-md space-y-8 px-4 bg-white text-gray-600 sm:px-0">
+                <div className="w-full max-w-md space-y-8 px-4 bg-white scale-90 lg:scale-100 text-gray-600 sm:px-0">
                     <div className="">
                         <img src="https://floatui.com/logo.svg" width={150} className="lg:hidden" />
                         <div className="mt-5 space-y-2">
@@ -197,7 +210,7 @@ export default function Page() {
                                 }}
                             />
                         </div>
- 
+
                         <div {...getRootProps()} className="flex items-center justify-center w-full">
                             <label
                                 className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
@@ -238,13 +251,16 @@ export default function Page() {
                                 </div>
                             </label>
                         </div>
+                        {error && <p className='text-dm text-red-600'>*{error}</p>}
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
                             onClick={() => {
                                 handleImageSubmit(imageChoosed);
                             }}
                         >
-                            Create account
+                                                        {
+                                loading ? <p>Loading...</p> : <p>Create Account</p>
+                            }
                         </button>
                     </form>
                 </div>
