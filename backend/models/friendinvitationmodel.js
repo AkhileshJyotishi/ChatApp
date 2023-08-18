@@ -5,11 +5,11 @@ const schema=mongoose.Schema
 const friendinvitationschema=new schema({
         senderId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:'User'
+            ref:'user'
         },
         recieverId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:'User'
+            ref:'user'
 
         }
 
