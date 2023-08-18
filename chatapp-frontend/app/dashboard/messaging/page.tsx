@@ -212,9 +212,9 @@ var socket:any;
                                             }}
                                         />
                                     </div>
-                                    <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
-                                        {pendingfriendinvitations.length > 0 && pendingfriendinvitations.length}
-                                    </div>
+                                    {pendingfriendinvitations.length > 0 && <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
+                                        { pendingfriendinvitations.length}
+                                    </div>}
                                     <div
                                         className="z-50 hidden  my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-5 right-0 min-w-[200px]"
                                         id="notification"
@@ -339,7 +339,7 @@ var socket:any;
                 </nav>
                 <div className='bg-yellow-50 flex-grow flex h-[calc(100vh-56px)] overflow-y-auto'>
                     {/* FriendList */}
-                    <div className='h-full p-3 w-[20%] text-black'>
+                    <div className='h-full p-3 w-[25%] text-black'>
                         <div className='flex flex-col h-full bg-teal-50'>
                             <input type="text" className='w-full border-none' placeholder="Search for friends" />
                             <div className='flex-grow overflow-y-auto bg-red-100 border-t border-t-gray-300'>
@@ -351,7 +351,7 @@ var socket:any;
                                                     setActiveFriend(friend);
                                                 }}
                                             >
-                                                {/* <h2>{friend.name}</h2> */}
+                                                <h2>{friend.username}</h2>
                                             </div>
                                         )
                                     })
@@ -371,7 +371,7 @@ var socket:any;
                         </div>
                     </div>
                     {/* Messages */}
-                    <div className='h-full p-2 w-[60%] text-black'>
+                    <div className='h-full p-2 w-[75%] text-black'>
                         <div className='flex flex-col h-full bg-teal-50'>
                             {
                                 activeFriend !== null ?
@@ -379,11 +379,11 @@ var socket:any;
                                         {/* Header */}
                                         <div className='flex items-center justify-between w-full p-3 bg-white'>
                                             <div className='flex items-center gap-5'>
-                                                <div>
-                                                    <img src={activeFriend.image} alt="" width={'48'} height={'48'} className='rounded-full' />
+                                                <div className='h-12 w-12'>
+                                                    <img src={activeFriend?.profile || "/userAvatar.svg"} alt="" width={'48'} height={'48'} className='rounded-full border' />
                                                 </div>
                                                 <div>
-                                                    <p><b>{activeFriend?.name}</b></p>
+                                                    <p><b>{activeFriend?.username}</b></p>
                                                 </div>
                                             </div>
                                             <div className='flex items-center gap-4 mr-3'>
@@ -399,6 +399,7 @@ var socket:any;
                                         {/* Chat */}
                                         <div className='flex-grow overflow-y-auto'>
                                             Hello<br></br>
+                                            Hello<br></br>
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
@@ -413,12 +414,6 @@ var socket:any;
                                     )
 
                             }
-                        </div>
-                    </div>
-                    {/* Active Friends */}
-                    <div className='h-full p-3 w-[20%] text-black'>
-                        <div className='h-full bg-teal-50'>
-                            Hello
                         </div>
                     </div>
                 </div>
