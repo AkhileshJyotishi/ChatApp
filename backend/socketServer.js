@@ -12,6 +12,7 @@ const {
 
 // console.log(authsocket);
 // console.log(addnewconnecteduser)
+let io;
 const newconnectionhandle = async (socket, io) => {
   // console.log("newsockethandle ", socket.user);
   const userhandler = socket.user;
@@ -28,9 +29,11 @@ const disconnecthandler = (socket) => {
   removeconnecteduser(socket.id);
 };
 
+
+
 const registersocketserver = (server) => {
   // console.log("server connection ho rha h");
-  const io = require("socket.io")(server, {
+   io = require("socket.io")(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -39,10 +42,7 @@ const registersocketserver = (server) => {
   // console.log("asli io  ", io);
   setsocketserverinstance(io);
   io.use((socket, next) => verifytokensocket(socket, next));
-  const emitonlineusers = () => {
-    const onlineusers = getonlineusers();
-    io.emit("online-users", { onlineusers });
-  };
+
 
   io.on("connection", (socket) => {
     console.log("user connected " + socket.id);
@@ -55,6 +55,10 @@ const registersocketserver = (server) => {
       disconnecthandler(socket);
     });
   });
+};
+const emitonlineusers = () => {
+  const onlineusers = getonlineusers();
+  io.emit("online-users", { onlineusers });
 };
 
 setInterval(() => {
