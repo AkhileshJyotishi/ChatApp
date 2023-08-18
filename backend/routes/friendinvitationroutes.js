@@ -4,8 +4,8 @@ const router = express.Router();
 const validator = require("express-joi-validation").createValidator({});
 const { verifyToken } = require("../middlewares/auth");
 const { friendinvites } = require("../controllers/friendinvitationcontroller");
-const { acceptinvites } = require("../controllers/acceptinvitationcontroller");
-const { rejectinvites } = require("../controllers/rejectinvitationcontroller");
+const { friendaccept } = require("../controllers/acceptinvitationcontroller");
+const { friendreject } = require("../controllers/rejectinvitationcontroller");
 // console.log(verifytoken)
 const postfriendinvitationschema = Joi.object({
   targetmailaddress: Joi.string().email().required(),
@@ -13,8 +13,9 @@ const postfriendinvitationschema = Joi.object({
 });
 const accpetinvitationschema = Joi.object({
   id: Joi.string().required(),
+
 });
-console.log("schema tak hua");
+// console.log("schema tak hua");
 router.post(
   "/invite",
   verifyToken,
@@ -25,13 +26,14 @@ router.post(
   "/accept",
   verifyToken,
   validator.body(accpetinvitationschema),
-  acceptinvites
+  friendaccept
 );
+console.log("yha tak chala")
 router.post(
   "/reject",
   verifyToken,
   validator.body(accpetinvitationschema),
-  rejectinvites
+  friendreject
 );
 
 module.exports = router;

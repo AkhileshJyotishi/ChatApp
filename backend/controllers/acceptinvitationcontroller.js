@@ -23,12 +23,13 @@ const friendaccept = async (req, res) => {
         { new: true }
       );
       // user1.friends
-
-      
       await friendinvitation.findOneAndDelete({
         senderId: id,
         recieverId: userId,
       });
+      updatefriendspendinginvitations(userId);
+
+      
       //   await friendinvitation
     } else {
       return res.status(400).json({
@@ -37,7 +38,6 @@ const friendaccept = async (req, res) => {
       });
     }
 
-    updatefriendspendinginvitations(userId);
     return res.status(200).json({
       success: true,
       message: "invitation deleted successfully",
