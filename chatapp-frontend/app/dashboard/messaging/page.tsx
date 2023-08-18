@@ -37,7 +37,9 @@ export default function Page() {
     const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
-
+const [chattype,setchattype]=useState<any>("");
+const [chatactions,setchatactions]=useState<any>("");
+const [messages,setmessages]=useState<any[]>([]);
 
 
 
@@ -144,6 +146,10 @@ export default function Page() {
                 const { friends } = data;
                 setfriends(friends);
 
+            })
+            socket.on("online-users", (data) => {
+                const { onlineusers } = data;
+                setonlineusers(onlineusers)
             })
         }
     }
