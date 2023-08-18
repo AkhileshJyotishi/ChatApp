@@ -86,6 +86,7 @@ export default function Page() {
     }
     function declineInvitation(recieverId,senderId){
         
+        
     }
     function acceptInvitation(recieverId,senderId){
     }
@@ -110,7 +111,7 @@ export default function Page() {
             // socket.on("friend", (data) => {
             //     console.log("i am fool", data)
             // })
-            socket.on("friend", (data) => {
+            socket.on("friend", (data:any) => {
                 // console.log("socket m reieve ho rha h"); 
                 console.log(data);
                 const { pendinginvitations } = data;
