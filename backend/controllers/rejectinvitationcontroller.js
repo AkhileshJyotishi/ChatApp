@@ -2,23 +2,18 @@ const friendinvitation = require("../models/friendinvitationmodel");
 const { updatefriendspendinginvitations } = require("../sockets/friends");
 
 const friendreject = async (req, res) => {
-  console.log("rejection se pehele")
+  console.log("rejection se pehele");
   try {
+    console.log("desired data",req.body);
     const { id } = req.body;
-    const { userId } = req.user;
     const invitationexists = await friendinvitation.exists({
-      senderId: id,
-      recieverId: userId,
+      _id:id
     });
-    console.log(invitationexists)
+    console.log("invitation exist",invitationexists);
     if (invitationexists) {
       const { userId } = req.user;
-      
-    
-      await friendinvitation.findOneAndDelete({
-        senderId: id,
-        recieverId: userId,
-      });
+
+      await friendinvitation.findByIdAndDelete(id);
       updatefriendspendinginvitations(userId);
 
       return res.status(200).json({

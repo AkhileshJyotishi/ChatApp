@@ -13,6 +13,8 @@ const postfriendinvitationschema = Joi.object({
 });
 const accpetinvitationschema = Joi.object({
   id: Joi.string().required(),
+  token: Joi.string(),
+
 
 });
 // console.log("schema tak hua");
