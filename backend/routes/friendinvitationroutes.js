@@ -27,7 +27,7 @@ router.post(
 router.post(
   "/accept",
   verifyToken,
-  validator.body(accpetinvitationschema),
+  
   friendaccept
 );
 console.log("yha tak chala")

@@ -4,32 +4,26 @@ const { updatefriendspendinginvitations } = require("../sockets/friends");
 
 const friendaccept = async (req, res) => {
   try {
-    const { id } = req.body;
-    const { userId } = req.user;
-    const invitationexists = await friendinvitation.exists({
-      senderId: id,
-      recieverId: userId,
-    });
+    const { id,invitationId} = req.body;
+
+    const userId = req.user.data._id;
+    // samne wale ki id
+    const invitationexists = await friendinvitation.exists({ _id: id });
     if (invitationexists) {
-     
       const user1 = await usermodel.findByIdAndUpdate(
         id,
         { $push: { friends: userId } },
         { new: true }
       );
-      const user2= await usermodel.findByIdAndUpdate(
+      const user2 = await usermodel.findByIdAndUpdate(
         userId,
         { $push: { friends: id } },
         { new: true }
       );
       // user1.friends
-      await friendinvitation.findOneAndDelete({
-        senderId: id,
-        recieverId: userId,
-      });
+      await friendinvitation.findByIdAndDelete({_id:invitationId});
       updatefriendspendinginvitations(userId);
 
-      
       //   await friendinvitation
     } else {
       return res.status(400).json({

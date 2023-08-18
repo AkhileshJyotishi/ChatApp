@@ -95,11 +95,13 @@ export default function Page() {
         )
         console.log(friendinvitation)
     }
-   async function acceptInvitation(senderId:any){
+   async function acceptInvitation(senderId:any,invitationId:any){
     try{
         const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/accept",
         {
-            id:senderId
+            id:senderId,
+            invitationId,
+            token:auth.token
         })
         console.log(friendinvitation)
         
@@ -219,7 +221,7 @@ export default function Page() {
                                                                     <img src="/cross.svg" alt="" width={16} height={16} />
                                                                 </button>
                                                                 <button onClick={()=>{
-                                                                    acceptInvitation(friend.senderId._id)
+                                                                    acceptInvitation(friend.senderId._id,friend._id)
                                                                 }}>
                                                                     <img src="/check.svg" alt="" width={20} height={20}/>
                                                                 </button>
