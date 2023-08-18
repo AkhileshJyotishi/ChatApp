@@ -21,17 +21,25 @@ const removeconnecteduser = (socketid) => {
   }
 };
 const getactiveconnections = (userid) => {
-  console.log("connected users are ",connectedusers)
+  console.log("connected users are ", connectedusers);
 
   const activeconnections = [];
   connectedusers.forEach((value, key) => {
     if (value.userid == userid) {
-      console.log(key)
+      console.log(key);
       activeconnections.push(key);
       // console.log(typeof(key))
     }
   });
   return activeconnections;
+};
+
+const getonlineusers = () => {
+  const onlineUsers = [];
+  connectedusers.forEach((user) => {
+    onlineUsers.push({ socketid: key, userid: value.userid });
+    return onlineUsers;
+  });
 };
 
 module.exports = {
@@ -40,4 +48,5 @@ module.exports = {
   getactiveconnections,
   setsocketserverinstance,
   getsocketserverinstance,
+  getonlineusers
 };
