@@ -20,7 +20,10 @@ export default function Connectwithsocketserver() {
     console.log("successfully connected to the server");
     console.log(socket.id);
   });
+  
   socket.on("friend-invitations",(data)=>{
+    console.log("socket m reieve ho rha h")
+    console.log(data)
   const {pendinginvitations}=data;
   setpendingfriendinvitations(pendinginvitations)
   
