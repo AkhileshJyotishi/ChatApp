@@ -2,11 +2,14 @@ import io from "socket.io-client";
 
 import { AuthContext } from "@/contexts/authContext";
 import { useContext } from "react";
+import { socketsContext } from "../../contexts/socketcontext";
 let socket;
 export default function Connectwithsocketserver() {
   const { auth, setAuth } = useContext(AuthContext);
 
   // const jwttoken = userdetails.token;
+  // {friends2, setfriends,pendingfriendinvitations, setpendingfriendinvitations,onlineusers, setonlineusers,targetmailaddress,settargetmailaddress}
+  const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
 
   socket = io("http://localhost:5002", {
     auth: {
@@ -17,8 +20,9 @@ export default function Connectwithsocketserver() {
     console.log("successfully connected to the server");
     console.log(socket.id);
   });
+  socket.on("friend-invitations",(data)=>{
+  const {pendinginvitations}=data;
+  setpendingfriendinvitations(pendinginvitations)
+  
+  })
 };
-
-socket.on("friends-invitations",()=>{
-
-})

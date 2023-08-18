@@ -1,5 +1,6 @@
 'use client'
 import { AuthContext } from '@/contexts/authContext';
+import { socketsContext } from '@/contexts/socketcontext';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
@@ -17,10 +18,7 @@ export default function Page() {
         }
     ]
 
-    const [friends2, setfriends] = useState<any[]>([]);
-    const [pendingfriendinvitations, setpendingfriendinvitations] = useState<any[]>([])
-    const [onlineusers, setonlineusers] = useState<any[]>([])
-const [targetmailaddress,settargetmailaddress]=useState<String>("")
+
     const sendfriendinvitation = async (data: object) => {
         try {
             const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/invite",
@@ -60,6 +58,7 @@ const [targetmailaddress,settargetmailaddress]=useState<String>("")
 
 
     const { auth, setAuth } = useContext(AuthContext);
+    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
     if (auth == null) {
@@ -68,6 +67,7 @@ const [targetmailaddress,settargetmailaddress]=useState<String>("")
     }
     function Connectwithsocketserver() {
         console.log("chalaya par nhi chala")
+        console.log(auth.token)
         let socket = io("http://localhost:5002", {
             auth: {
                 token: auth.token
@@ -237,13 +237,13 @@ const [targetmailaddress,settargetmailaddress]=useState<String>("")
                                 })
                             }
                             <div >
-                                <input type="text" onChange={()=>{
+                                <input type="text" onChange={() => {
 
-                                }}/>
+                                }} />
                                 <button onClick={() => {
                                     sendfriendinvitation({
-                                        targetmailaddress:"akhileshkyotishi1729@gmail.com",
-                                        token:auth.token
+                                        targetmailaddress: "akhileshkyotishi1729@gmail.com",
+                                        token: auth.token
                                     })
 
                                 }}>send invitation</button>
