@@ -25,7 +25,7 @@ export default function Page() {
     const router = useRouter();
 
     useEffect(() => {
-        if(!auth){
+        if (!auth) {
             router.push('/login');
         }
     }, [auth])
@@ -73,7 +73,7 @@ export default function Page() {
 
 
 
-   
+
     function Connectwithsocketserver() {
         if (auth) {
             console.log("chalaya par nhi chala")
@@ -86,6 +86,15 @@ export default function Page() {
                 console.log("successfully connected to the server");
                 console.log(socket.id);
             });
+            // socket.on("friend", (data) => {
+            //     console.log("i am fool", data)
+            // })
+            socket.on("friend", (data) => {
+                // console.log("socket m reieve ho rha h"); 
+                console.log(data);
+                // const {pendinginvitations}=data;
+                // setpendingfriendinvitations(pendinginvitations)
+              });
         }
     }
 
@@ -167,7 +176,7 @@ export default function Page() {
                                                 className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                                 role="none"
                                             >
-                                                {auth.email||auth.mail}
+                                                {auth.email || auth.mail}
                                             </p>
                                         </div>
                                         <ul className="py-1" role="none">
@@ -280,25 +289,25 @@ export default function Page() {
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>
-                                    :(
+                                    : (
                                         <>
-                                    <p>
-                                        Select some person to chat
-                                    </p>
-                                    <div>
-                                        {
-                                            pendingfriendinvitations.map((invitation:any,key:any)=>{
-                                                return (
-                                                    <>
-                                                    <div>
-                                                        invitation
-                                                    </div>
-                                                    </>
-                                                )
-                                            })
-                                        }
-                                    </div>
-                                    </>
+                                            <p>
+                                                Select some person to chat
+                                            </p>
+                                            <div>
+                                                {
+                                                    pendingfriendinvitations.map((invitation: any, key: any) => {
+                                                        return (
+                                                            <>
+                                                                <div>
+                                                                    invitation
+                                                                </div>
+                                                            </>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </>
                                     )
 
                             }

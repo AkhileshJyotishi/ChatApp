@@ -29,12 +29,12 @@ const friendinvites = async (req, res) => {
     senderId: req.user.data._id,
     recieverId: targetuser._id,
   });
-  if (invitationAlreadyrecieved) {
-    return res.json({
-      success: false,
-      message: "you have sent the invitation already",
-    });
-  }
+  // if (invitationAlreadyrecieved) {
+  //   return res.json({
+  //     success: false,
+  //     message: "you have sent the invitation already",
+  //   });
+  // }
 
   //if invited friend is already in our list i.e. already a friend
   const userAlreadyfriends = targetuser.friends.find((friendId) => {

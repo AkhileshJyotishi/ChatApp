@@ -5,7 +5,7 @@ const loginSchema = new mongoose.Schema({
   mail: { type: String },
   password: { type: String },
   profile: { type: String },
-  friends: [{ type: mongoose.Schema.Types.Array, ref: "User" }],
+  friends: [{ type: mongoose.Schema.Types.Array, ref: "user" }],
 });
 module.exports = mongoose.model("user", loginSchema);
 // auth

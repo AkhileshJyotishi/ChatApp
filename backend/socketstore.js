@@ -1,8 +1,9 @@
 const connectedusers = new Map();
 let io = null;
 const setsocketserverinstance = (ioinstance) => {
-  console.log("setsocketserverinstance working " + ioinstance);
+  console.log("setsocketserverinstance working " , ioinstance);
   io = ioinstance;
+  console.log("checker io  ",io)
 };
 const getsocketserverinstance = () => {
   return io;
