@@ -2,6 +2,7 @@
 import { AuthContext } from '@/contexts/authContext';
 import { socketsContext } from '@/contexts/socketcontext';
 import axios from 'axios';
+import { trace } from 'console';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
@@ -84,16 +85,35 @@ export default function Page() {
         }
 
     }
-    function declineInvitation(recieverId,senderId){
+    async function declineInvitation(senderId:any){
+        // http://localhost:5002/v1/api/friend-invitation/invite
+        const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/reject",
+        {
+            id:senderId,
+            token:auth.token
+        }        
+        )
+        console.log(friendinvitation)
+    }
+   async function acceptInvitation(senderId:any){
+    try{
+        const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/accept",
+        {
+            id:senderId
+        })
+        console.log(friendinvitation)
         
     }
-    function acceptInvitation(recieverId,senderId){
+    catch(err){
+        console.error(err)
     }
+    }
+    
 
 
 
 
-
+    // window.list = pendingfriendinvitations;
 
     function Connectwithsocketserver() {
         if (auth) {
@@ -121,7 +141,7 @@ export default function Page() {
 
     return (
         <>
-            {auth && <div className='flex flex-col h-screen w-screen'>
+            {auth && <div className='flex flex-col w-screen h-screen'>
                 <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                     <div className="px-3 py-3 lg:px-5 lg:pl-3">
                         <div className="flex items-center justify-between">
@@ -162,7 +182,7 @@ export default function Page() {
                                     </span>
                                 </a>
                             </div>
-                            <div className='flex gap-4 items-center'>
+                            <div className='flex items-center gap-4'>
                                 <div className='relative'>
                                     <div>
                                         <img src="/notificationBell.svg" alt="" width={20} height={20}
@@ -182,10 +202,10 @@ export default function Page() {
                                             pendingfriendinvitations.map((friend:any, key:number) => {
                                                 return (
                                                     <>
-                                                        <div key={key} className='flex justify-between items-center w-full p-3'>
-                                                            <div className='flex gap-3 items-center'>
+                                                        <div key={key} className='flex items-center justify-between w-full p-3'>
+                                                            <div className='flex items-center gap-3'>
                                                                 <img
-                                                                    className="w-8 h-8 rounded-full border"
+                                                                    className="w-8 h-8 border rounded-full"
                                                                     src={`${friend.senderId.profile}`}
                                                                     alt="user photo"
                                                                 />
@@ -193,12 +213,12 @@ export default function Page() {
                                                             </div>
                                                             <div className='flex gap-2'>
                                                                 <button onClick={()=>{
-                                                                    declineInvitation(friend.recieverId,friend.senderId._id)
+                                                                    declineInvitation(friend._id)
                                                                 }}>
                                                                     <img src="/cross.svg" alt="" width={16} height={16} />
                                                                 </button>
                                                                 <button onClick={()=>{
-                                                                    acceptInvitation(friend.recieverId,friend.senderId._id)
+                                                                    acceptInvitation(friend.senderId._id)
                                                                 }}>
                                                                     <img src="/check.svg" alt="" width={20} height={20}/>
                                                                 </button>
@@ -211,7 +231,7 @@ export default function Page() {
                                     </div>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="flex items-center ml-3 relative">
+                                    <div className="relative flex items-center ml-3">
                                         <div>
                                             <button
                                                 type="button"
@@ -231,7 +251,7 @@ export default function Page() {
                                             </button>
                                         </div>
                                         <div
-                                            className="z-50 hidden  my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-5 right-0"
+                                            className="absolute right-0 z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 top-5"
                                             id="dropdown-user"
                                         >
                                             <div className="px-4 py-3" role="none">
@@ -299,13 +319,13 @@ export default function Page() {
                 <div className='bg-yellow-50 flex-grow flex h-[calc(100vh-56px)] overflow-y-auto'>
                     {/* FriendList */}
                     <div className='h-full p-3 w-[20%] text-black'>
-                        <div className=' bg-teal-50 h-full flex flex-col'>
+                        <div className='flex flex-col h-full bg-teal-50'>
                             <input type="text" className='w-full border-none' placeholder="Search for friends" />
-                            <div className='flex-grow bg-red-100 overflow-y-auto  border-t-gray-300 border-t'>
+                            <div className='flex-grow overflow-y-auto bg-red-100 border-t border-t-gray-300'>
                                 {
                                     friends.map((friend, key) => {
                                         return (
-                                            <div key={key} className='border-b-gray-300 cursor-pointer border-b p-3 hover:bg-gray-50 bg-white'
+                                            <div key={key} className='p-3 bg-white border-b cursor-pointer border-b-gray-300 hover:bg-gray-50'
                                                 onClick={() => {
                                                     setActiveFriend(friend);
                                                 }}
@@ -331,13 +351,13 @@ export default function Page() {
                     </div>
                     {/* Messages */}
                     <div className='h-full p-2 w-[60%] text-black'>
-                        <div className=' bg-teal-50 h-full flex flex-col'>
+                        <div className='flex flex-col h-full bg-teal-50'>
                             {
                                 activeFriend !== null ?
                                     <>
                                         {/* Header */}
-                                        <div className='bg-white w-full p-3 flex justify-between items-center'>
-                                            <div className='flex gap-5 items-center'>
+                                        <div className='flex items-center justify-between w-full p-3 bg-white'>
+                                            <div className='flex items-center gap-5'>
                                                 <div>
                                                     <img src={activeFriend.image} alt="" width={'48'} height={'48'} className='rounded-full' />
                                                 </div>
@@ -345,11 +365,11 @@ export default function Page() {
                                                     <p><b>{activeFriend?.name}</b></p>
                                                 </div>
                                             </div>
-                                            <div className='flex gap-4 items-center mr-3'>
-                                                <button className='text-black mt-2'>
+                                            <div className='flex items-center gap-4 mr-3'>
+                                                <button className='mt-2 text-black'>
                                                     <img src="/telephone.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
-                                                <button className='text-black mt-2'>
+                                                <button className='mt-2 text-black'>
                                                     <img src="/videocall.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
 
@@ -361,7 +381,7 @@ export default function Page() {
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
-                                            <input type="text" className='flex-grow border-none outline-none rounded' placeholder='Type a message' />
+                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' />
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>
@@ -376,7 +396,7 @@ export default function Page() {
                     </div>
                     {/* Active Friends */}
                     <div className='h-full p-3 w-[20%] text-black'>
-                        <div className=' bg-teal-50 h-full'>
+                        <div className='h-full bg-teal-50'>
                             Hello
                         </div>
                     </div>
