@@ -1,20 +1,95 @@
 'use client'
 import { AuthContext } from '@/contexts/authContext';
-import React, { useContext, useState } from 'react'
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import React, { useContext, useEffect, useState } from 'react'
+import io from "socket.io-client";
 
 export default function Page() {
     const friends = [
         {
-            name:"Hello",
-            imageUrl:""
-        }, 
+            name: "Hello",
+            imageUrl: ""
+        },
         {
-            name:"Ramesh",
-            imageUrl:""
+            name: "Ramesh",
+            imageUrl: ""
         }
     ]
+
+    const [friends2, setfriends] = useState<any[]>([]);
+    const [pendingfriendinvitations, setpendingfriendinvitations] = useState<any[]>([])
+    const [onlineusers, setonlineusers] = useState<any[]>([])
+const [targetmailaddress,settargetmailaddress]=useState<String>("")
+    const sendfriendinvitation = async (data: object) => {
+        try {
+            const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/invite",
+                data
+            )
+            //     //ambiguous---if error
+            if (friendinvitation.data.message) {
+
+                console.log(friendinvitation.data.message);
+
+            }
+            else {
+                //    console.log( dispatch({ type: 'Set_Pending_friend_invitations', pendingfriendinvitations: friendinvitation }))
+                // </clg> c
+                console.log(friendinvitation);
+                // setfriends()
+                setpendingfriendinvitations((prev: any[]) => {
+                    return [...prev, friendinvitation.data]
+                    // ...prev, friendinvitation
+                })
+            }
+
+
+
+        }
+        catch (err) {
+
+            console.log(err)
+
+        }
+
+    }
+
+
+
+
+
+
     const { auth, setAuth } = useContext(AuthContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
+    const router = useRouter();
+    if (auth == null) {
+        router.push('/login');
+        return null;
+    }
+    function Connectwithsocketserver() {
+        console.log("chalaya par nhi chala")
+        let socket = io("http://localhost:5002", {
+            auth: {
+                token: auth.token
+            }
+        });
+        socket.on("connect", () => {
+            console.log("successfully connected to the server");
+            console.log(socket.id);
+        });
+
+    }
+
+    useEffect(() => {
+        Connectwithsocketserver();
+        //very important to add cleanup function
+        // return (
+
+        // )
+    }, [])
+
+
+
     return (
         <div className='flex flex-col h-screen w-screen'>
             <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -161,6 +236,18 @@ export default function Page() {
                                     )
                                 })
                             }
+                            <div >
+                                <input type="text" onChange={()=>{
+
+                                }}/>
+                                <button onClick={() => {
+                                    sendfriendinvitation({
+                                        targetmailaddress:"akhileshkyotishi1729@gmail.com",
+                                        token:auth.token
+                                    })
+
+                                }}>send invitation</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,7 +256,7 @@ export default function Page() {
                     <div className=' bg-teal-50 h-full flex flex-col'>
                         {
                             activeFriend !== null ?
-                            <>
+                                <>
                                     {/* Header */}
                                     <div className='bg-white w-full p-3 flex justify-between items-center'>
                                         <div className='flex gap-5 items-center'>
@@ -194,8 +281,8 @@ export default function Page() {
                                         <button className='p-2'>Send</button>
                                     </div>
                                 </>
-                            
-                                
+
+
 
                                 :
                                 <p>

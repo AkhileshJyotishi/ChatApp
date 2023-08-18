@@ -1,5 +1,5 @@
 const {verifytokensocket} = require("./middlewares/authsocket");
-const { addnewconnecteduser, removeconnecteduser } = require("./socketstore");
+const { addnewconnecteduser, removeconnecteduser ,setsocketserverinstance} = require("./socketstore");
 
 // console.log(authsocket);
 // console.log(addnewconnecteduser)
@@ -17,18 +17,18 @@ removeconnecteduser(socket.id);
 } 
 
 
-
 const registersocketserver = (server) => {
-  // console.log("server connection ho rha h");
+  console.log("server connection ho rha h");
   const io = require("socket.io")(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
     },
   });
+  setsocketserverinstance(io);
   io.use((socket, next) => verifytokensocket(socket, next));
   io.on("connection", (socket) => {
-    // console.log("user connected " + socket.id);
+    console.log("user connected " + socket.id);
     newconnectionhandle(socket, io);
     socket.on("disconnect",()=>{
       disconnecthandler(socket);

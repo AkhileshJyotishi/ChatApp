@@ -3,6 +3,7 @@ require("dotenv").config();
 
 
 const verifytokensocket=(socket,next)=>{
+    console.log("verification of socket")
     const token= socket.handshake.auth?.token;
 
     try{

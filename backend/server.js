@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const db = require("./db");
 const authcontrol = require("./routes/authroutes");
+const friendinvitationcontrol = require("./routes/friendinvitationroutes");
 const socketserver = require("./socketServer");
 require("dotenv").config();
 const port = process.env.PORT || process.env.API_PORT;
@@ -18,9 +19,10 @@ app.use(morgan("dev"));
 
 db();
 // console.log(typedefs);
+socketserver.registersocketserver(server);
 
 app.use("/v1/api/auth", authcontrol);
-socketserver.registersocketserver(server);
+app.use('/v1/api/friend-invitation',friendinvitationcontrol)
 server.listen(port, () => {
   console.log("server started on port", port);
 });

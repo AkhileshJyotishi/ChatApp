@@ -3,15 +3,14 @@ import { useRouter } from 'next/navigation';
 import React, { useContext,useReducer, useEffect } from 'react'
 import io from "socket.io-client";
 import Snackbar from '@mui/material/Snackbar'
-import {reducer,initialstate} from '../reducers/reducers'
+// import {reducer,initialstate} from '../reducers/reducers'
 import { AuthContext } from '@/contexts/authContext';
-
 // import Connectwithsocketserver from '../realtimeconnection/socketconnection'
 // import connect
 
 export default function Page() {
     const { auth, setAuth } = useContext(AuthContext);
-    const [state, dispatch] = useReducer(reducer, initialstate);
+    // const [state, dispatch] = useReducer(reducer, initialstate);
     const router = useRouter();
     if(auth==null){
         router.push('/login');

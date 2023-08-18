@@ -1,18 +1,26 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const verifyToken = (req, res, next) => {
-  let decode =
-    req.body.token || req.query.token || req.headers["authorization"];
+const verifyToken = async(req, res, next) => {
+  console.log("verify token chala")
+  let decode =req.body.token || req.query.token || req.headers["authorization"];
+  // console.log(decode)
   if (!decode) {
+    console.log("truthful")
     return res.status(403).send({
       success: false,
       message: "authentication token not found",
     });
+    
   }
+  console.log("if ke baad")
   try {
-    const decodedtoken = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(process.env.JWTSecretKey)
+    const decodedtoken = await jwt.verify(decode, process.env.JWTSecretKey);
+    console.log(decodedtoken)
     req.user = decodedtoken;
+    console.log("working")
+    next();
   } catch (err) {
     res.json({
       success: false,

@@ -47,7 +47,7 @@ export default function Page() {
             const data = await response.data.message.data
             if (tokencame) {
                 setAuth({ ...data, token: tokencame });
-                router.push('/dashboard')
+                router.push('/dashboard/messaging')
                 console.log("Logged in successfully", response.data.message);
             } else {
                 setError(response.data.message);
@@ -59,7 +59,8 @@ export default function Page() {
     }
 
     if (auth != null) {
-        router.push('/dashboard');
+        //hereis problem is 
+        router.push('/dashboard/messaging');
         return null;
     }
 

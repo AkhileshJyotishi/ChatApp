@@ -18,3 +18,7 @@ export default function Connectwithsocketserver() {
     console.log(socket.id);
   });
 };
+
+socket.on("friends-invitations",()=>{
+
+})
