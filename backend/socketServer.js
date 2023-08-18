@@ -1,4 +1,5 @@
 const { verifytokensocket } = require("./middlewares/authsocket");
+const { updatefriendspendinginvitations, updatefriends } = require("./sockets/friends");
 const {
   addnewconnecteduser,
   removeconnecteduser,
@@ -14,6 +15,10 @@ const newconnectionhandle = async (socket, io) => {
     socketid: socket.id,
     userid: userhandler.data._id,
   });
+
+updatefriendspendinginvitations(userhandler.data._id)
+updatefriends(userhandler.data._id);
+
 };
 
 const disconnecthandler = (socket) => {

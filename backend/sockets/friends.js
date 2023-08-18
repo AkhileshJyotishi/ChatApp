@@ -11,16 +11,16 @@ const updatefriendspendinginvitations = async (userId) => {
       })
       .populate("senderId", "_id username profile mail");
 
-    console.log("peding invitations  ", pendinginvitations);
+    // console.log("peding invitations  ", pendinginvitations);
 
     const recieverlist = socketstore.getactiveconnections(userId);
-    console.log("recieverlist ", recieverlist)
+    // console.log("recieverlist ", recieverlist);
     const io = socketstore.getsocketserverinstance();
     // io.emit("friend", {
     //   pendinginvitations: pendinginvitations ? pendinginvitations : [],
     // });
     recieverlist.forEach((recieversocketid) => {
-      console.log(recieversocketid);
+      // console.log(recieversocketid);
       io.to(recieversocketid).emit("friend", {
         pendinginvitations: pendinginvitations ? pendinginvitations : [],
       });
@@ -31,14 +31,38 @@ const updatefriendspendinginvitations = async (userId) => {
     console.log(err);
   }
 };
-const friendslists=async()=>{
-  try{
+const updatefriends = async (userId) => {
+  try {
+    const recieverlist = socketstore.getactiveconnections(userId);
+    // console.log("friends  ",recieverlist)
+    if (recieverlist.length > 0) {
+      const user2 = await user
+        .findById(userId, { _id: 1, friends: 1 })
+        .populate("friends", "_id username mail profile");
+      // console.log(user2)
+      if (user2) {
+        const friendslist = user2.friends.map((key, index) => {
+          return {
+            id: key._id,
+            mail: key.mail,
+            username: key.username,
+            profile: key.profile,
+          };
+        });
+        console.log("this is the friendlist    ", friendslist);
 
-  }
-  catch(err){
-    
-  }
-}
+        //find  active connection of specific id
+        const io = socketstore.getsocketserverinstance();
+        recieverlist.forEach((recieversocketid) => {
+          io.to(recieversocketid).emit("friends-list", {
+            friends: friendslist ? friendslist : [],
+          });
+        });
+      }
+    }
+  } catch (err) {}
+};
 module.exports = {
   updatefriendspendinginvitations,
+  updatefriends,
 };

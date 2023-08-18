@@ -8,29 +8,29 @@ import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
 
 export default function Page() {
-    const friends = [
-        {
-            name: "Hello",
-            imageUrl: ""
-        },
-        {
-            name: "Ramesh",
-            imageUrl: ""
-        }
-    ]
-    const dara = [
-        {
-            "_id": "64df3edc8627375648426f59",
-            "senderId": {
-                "_id": "64dc9b7d5d0762a82138a381",
-                "username": "Akhilesh",
-                "mail": "abc@gmail.com",
-                "profile": "https://res.cloudinary.com/dfl98cqja/image/upload/v1692175041/doraemon.jpg"
-            },
-            "recieverId": "64df0c2a645169a09132c6f1",
-            "__v": 0
-        }
-    ]
+    // const friends = [
+    //     {
+    //         name: "Hello",
+    //         imageUrl: ""
+    //     },
+    //     {
+    //         name: "Ramesh",
+    //         imageUrl: ""
+    //     }
+    // ]
+    // const dara = [
+    //     {
+    //         "_id": "64df3edc8627375648426f59",
+    //         "senderId": {
+    //             "_id": "64dc9b7d5d0762a82138a381",
+    //             "username": "Akhilesh",
+    //             "mail": "abc@gmail.com",
+    //             "profile": "https://res.cloudinary.com/dfl98cqja/image/upload/v1692175041/doraemon.jpg"
+    //         },
+    //         "recieverId": "64df0c2a645169a09132c6f1",
+    //         "__v": 0
+    //     }
+    // ]
 
 
     const { auth, setAuth } = useContext(AuthContext);
@@ -85,33 +85,33 @@ export default function Page() {
         }
 
     }
-    async function declineInvitation(senderId:any){
+    async function declineInvitation(senderId: any) {
         // http://localhost:5002/v1/api/friend-invitation/invite
         const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/reject",
-        {
-            id:senderId,
-            token:auth.token
-        }        
+            {
+                id: senderId,
+                token: auth.token
+            }
         )
         console.log(friendinvitation)
     }
-   async function acceptInvitation(senderId:any,invitationId:any){
-    try{
-        const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/accept",
-        {
-            id:senderId,
-            invitationId,
-            token:auth.token
-        })
-        console.log(friendinvitation)
-        
-        
+    async function acceptInvitation(senderId: any, invitationId: any) {
+        try {
+            const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/accept",
+                {
+                    id: senderId,
+                    invitationId,
+                    token: auth.token
+                })
+            console.log(friendinvitation)
+
+
+        }
+        catch (err) {
+            console.error(err)
+        }
     }
-    catch(err){
-        console.error(err)
-    }
-    }
-    
+
 
 
 
@@ -133,12 +133,18 @@ export default function Page() {
             // socket.on("friend", (data) => {
             //     console.log("i am fool", data)
             // })
-            socket.on("friend", (data:any) => {
+            socket.on("friend", (data: any) => {
                 // console.log("socket m reieve ho rha h"); 
                 console.log(data);
                 const { pendinginvitations } = data;
                 setpendingfriendinvitations(pendinginvitations)
             });
+            socket.on("friends-list", (data: any) => {
+                console.log(data)
+                const { friends } = data;
+                setfriends(friends);
+
+            })
         }
     }
 
@@ -195,14 +201,14 @@ export default function Page() {
                                         />
                                     </div>
                                     <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
-                                        {pendingfriendinvitations.length>0 && pendingfriendinvitations.length}
+                                        {pendingfriendinvitations.length > 0 && pendingfriendinvitations.length}
                                     </div>
                                     <div
                                         className="z-50 hidden  my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-5 right-0 min-w-[200px]"
                                         id="notification"
                                     >
                                         {
-                                            pendingfriendinvitations.map((friend:any, key:number) => {
+                                            pendingfriendinvitations.map((friend: any, key: number) => {
                                                 return (
                                                     <>
                                                         <div key={key} className='flex items-center justify-between w-full p-3'>
@@ -215,15 +221,15 @@ export default function Page() {
                                                                 <p>{friend.senderId.username}</p>
                                                             </div>
                                                             <div className='flex gap-2'>
-                                                                <button onClick={()=>{
+                                                                <button onClick={() => {
                                                                     declineInvitation(friend._id)
                                                                 }}>
                                                                     <img src="/cross.svg" alt="" width={16} height={16} />
                                                                 </button>
-                                                                <button onClick={()=>{
-                                                                    acceptInvitation(friend.senderId._id,friend._id)
+                                                                <button onClick={() => {
+                                                                    acceptInvitation(friend.senderId._id, friend._id)
                                                                 }}>
-                                                                    <img src="/check.svg" alt="" width={20} height={20}/>
+                                                                    <img src="/check.svg" alt="" width={20} height={20} />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -326,14 +332,14 @@ export default function Page() {
                             <input type="text" className='w-full border-none' placeholder="Search for friends" />
                             <div className='flex-grow overflow-y-auto bg-red-100 border-t border-t-gray-300'>
                                 {
-                                    friends.map((friend, key) => {
+                                    friends2 && friends2.map((friend: any, key: number) => {
                                         return (
                                             <div key={key} className='p-3 bg-white border-b cursor-pointer border-b-gray-300 hover:bg-gray-50'
                                                 onClick={() => {
                                                     setActiveFriend(friend);
                                                 }}
                                             >
-                                                <h2>{friend.name}</h2>
+                                                {/* <h2>{friend.name}</h2> */}
                                             </div>
                                         )
                                     })
