@@ -1,5 +1,6 @@
 'use client'
 import { AuthContext } from '@/contexts/authContext';
+import { socketsContext } from '@/contexts/socketcontext';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
@@ -17,11 +18,9 @@ export default function Page() {
         }
     ]
 
-    const [friends2, setfriends] = useState<any[]>([]);
-    const [pendingfriendinvitations, setpendingfriendinvitations] = useState<any[]>([])
-    const [onlineusers, setonlineusers] = useState<any[]>([])
-    const [targetmailaddress, settargetmailaddress] = useState<String>("")
+
     const { auth, setAuth } = useContext(AuthContext);
+    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
 
@@ -40,22 +39,24 @@ export default function Page() {
             const friendinvitation = await axios.post("http://localhost:5002/v1/api/friend-invitation/invite",
                 data
             )
+            console.log("invitation bhij gya")
+            console.log(friendinvitation)
             //     //ambiguous---if error
-            if (friendinvitation.data.message) {
+            // if (friendinvitation.data.message) {
 
-                console.log(friendinvitation.data.message);
+            //     console.log(friendinvitation.data.message);
 
-            }
-            else {
-                //    console.log( dispatch({ type: 'Set_Pending_friend_invitations', pendingfriendinvitations: friendinvitation }))
-                // </clg> c
-                console.log(friendinvitation);
-                // setfriends()
-                setpendingfriendinvitations((prev: any[]) => {
-                    return [...prev, friendinvitation.data]
-                    // ...prev, friendinvitation
-                })
-            }
+            // }
+            // else {
+            //     //    console.log( dispatch({ type: 'Set_Pending_friend_invitations', pendingfriendinvitations: friendinvitation }))
+            //     // </clg> c
+            //     console.log(friendinvitation);
+            //     // setfriends()
+            //     setpendingfriendinvitations((prev: any[]) => {
+            //         return [...prev, friendinvitation.data]
+            //         // ...prev, friendinvitation
+            //     })
+            // }
 
 
 
@@ -68,6 +69,11 @@ export default function Page() {
 
     }
 
+
+
+
+
+   
     function Connectwithsocketserver() {
         if (auth) {
             console.log("chalaya par nhi chala")
@@ -231,11 +237,12 @@ export default function Page() {
                                     })
                                 }
                                 <div >
-                                    <input type="text" onChange={() => {
+                                    <input type="text" onChange={(e) => {
+                                        settargetmailaddress(e.target.value)
                                     }} />
                                     <button onClick={() => {
                                         sendfriendinvitation({
-                                            targetmailaddress: "akhileshkyotishi1729@gmail.com",
+                                            targetmailaddress,
                                             token: auth.token
                                         })
                                     }}>send invitation</button>
@@ -279,10 +286,27 @@ export default function Page() {
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>
-                                    :
+                                    :(
+                                        <>
                                     <p>
                                         Select some person to chat
                                     </p>
+                                    <div>
+                                        {
+                                            pendingfriendinvitations.map((invitation:any,key:any)=>{
+                                                return (
+                                                    <>
+                                                    <div>
+                                                        invitation
+                                                    </div>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                    </>
+                                    )
+
                             }
                         </div>
                     </div>

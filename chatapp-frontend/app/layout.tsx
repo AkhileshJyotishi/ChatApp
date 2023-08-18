@@ -1,4 +1,5 @@
 import AuthContextProvider from '@/contexts/authContext'
+import SocketContextProvider from '@/contexts/socketcontext'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -18,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <SocketContextProvider>
         <AuthContextProvider>
           {children}
         </AuthContextProvider>
+        </SocketContextProvider>
       </body>
     </html>
   )
