@@ -23,7 +23,7 @@ export default function Page() {
 
             }
             else{
-                dispatch({type:'Friends.Set_Pending_friend_invitations',pendingfriendinvitations:''}:Object)
+                // dispatch({type:'Friends.Set_Pending_friend_invitations',pendingfriendinvitations:''})
             }
 
 

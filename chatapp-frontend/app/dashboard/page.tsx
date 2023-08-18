@@ -1,9 +1,10 @@
 'use client'
 import { useRouter } from 'next/navigation';
-import React, { useContext,useReducer, useEffect } from 'react'
+import React, { useContext, useReducer, useEffect } from 'react'
 import io from "socket.io-client";
 import Snackbar from '@mui/material/Snackbar'
-import {reducer,initialstate} from '../reducers/reducers'
+import { reducer, initialstate } from '../reducers/reducers'
+import { AuthContext } from '@/contexts/authContext';
 
 // import Connectwithsocketserver from '../realtimeconnection/socketconnection'
 // import connect
@@ -12,42 +13,42 @@ export default function Page() {
     const { auth, setAuth } = useContext(AuthContext);
     const [state, dispatch] = useReducer(reducer, initialstate);
     const router = useRouter();
-    if(auth==null){
+    if (auth == null) {
         router.push('/login');
         return null;
     }
- function Connectwithsocketserver() {
+    function Connectwithsocketserver() {
 
-    let socket = io("http://localhost:5002", {
-        auth: {
-          token: auth.token
-        }
-      });
-      socket.on("connect", () => {
-        console.log("successfully connected to the server");
-        console.log(socket.id);
-      });
+        let socket = io("http://localhost:5002", {
+            auth: {
+                token: auth.token
+            }
+        });
+        socket.on("connect", () => {
+            console.log("successfully connected to the server");
+            console.log(socket.id);
+        });
 
     }
-//destructure from reducer.js
-// const { counter, isLoading, data } = state;
+    //destructure from reducer.js
+    // const { counter, isLoading, data } = state;
 
-// Functions to dispatch actions
-// const increment = () => dispatch({ type: 'INCREMENT' });
-// const decrement = () => dispatch({ type: 'DECREMENT' });
-// const setLoading = (value) => dispatch({ type: 'SET_LOADING', payload: value });
-// const setData = (data) => dispatch({ type: 'SET_DATA', payload: data });
-
-
+    // Functions to dispatch actions
+    // const increment = () => dispatch({ type: 'INCREMENT' });
+    // const decrement = () => dispatch({ type: 'DECREMENT' });
+    // const setLoading = (value) => dispatch({ type: 'SET_LOADING', payload: value });
+    // const setData = (data) => dispatch({ type: 'SET_DATA', payload: data });
 
 
-    useEffect(()=>{
-        Connectwithsocketserver();
-        //very important to add cleanup function
-// return (
 
-// )
-    },[])
+
+    // useEffect(() => {
+    //     Connectwithsocketserver();
+    //     //very important to add cleanup function
+    //     // return (
+
+    //     // )
+    // }, [])
     return (
         <div>
             {auth && <>
@@ -176,14 +177,14 @@ export default function Page() {
                         </div>
                     </div>
                 </nav>
-                  <aside
+                <aside
                     id="logo-sidebar"
                     className="fixed top-0 left-0 z-40 w-30 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
                     aria-label="Sidebar"
                 >
                     <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                         <ul className="space-y-2 font-medium">
-                            
+
                             <li>
                                 <a
                                     href="#"
@@ -201,14 +202,14 @@ export default function Page() {
                                     <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
                                 </a>
                             </li>
-                            
-                           
+
+
                         </ul>
                     </div>
                 </aside>
-                
+
                 <div className="p-4 ">
-                   
+
                 </div>
             </>}
         </div>
