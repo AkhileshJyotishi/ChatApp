@@ -26,7 +26,7 @@ export default function Page() {
     const router = useRouter();
 
     useEffect(() => {
-        if(!auth){
+        if (!auth) {
             router.push('/login');
         }
     }, [auth])
@@ -161,7 +161,7 @@ export default function Page() {
                                                 className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                                 role="none"
                                             >
-                                                {auth.email||auth.mail}
+                                                {auth.email || auth.mail}
                                             </p>
                                         </div>
                                         <ul className="py-1" role="none">
@@ -220,7 +220,7 @@ export default function Page() {
                                 {
                                     friends.map((friend, key) => {
                                         return (
-                                            <div key={key} className='border-b-gray-300 border-b p-3 hover:bg-gray-50 bg-white'
+                                            <div key={key} className='border-b-gray-300 cursor-pointer border-b p-3 hover:bg-gray-50 bg-white'
                                                 onClick={() => {
                                                     setActiveFriend(friend);
                                                 }}
@@ -259,8 +259,14 @@ export default function Page() {
                                                     <p><b>{activeFriend?.name}</b></p>
                                                 </div>
                                             </div>
-                                            <div className='flex gap-3'>
-                                                <button>video call</button>
+                                            <div className='flex gap-4 items-center mr-3'>
+                                                <button className='text-black mt-2'>
+                                                    <img src="/telephone.svg" alt="Video Call" width={20} height={20} />
+                                                </button>
+                                                <button className='text-black mt-2'>
+                                                    <img src="/videocall.svg" alt="Video Call" width={20} height={20} />
+                                                </button>
+
                                             </div>
                                         </div>
                                         {/* Chat */}
@@ -269,7 +275,7 @@ export default function Page() {
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
-                                            <input type="text" className='flex-grow' placeholder='Type a message' />
+                                            <input type="text" className='flex-grow border-none outline-none rounded' placeholder='Type a message' />
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>

@@ -26,7 +26,6 @@ export default function Page() {
             router.push('/dashboard/messaging');
         }
     }, [auth])
-    window.auth = auth;
 
     const handleImageSubmit = async (imageChoosed: any) => {
         const formData = new FormData();
