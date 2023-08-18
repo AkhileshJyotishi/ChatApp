@@ -26,7 +26,7 @@ const updatefriendspendinginvitations = async (userId) => {
       });
       // });
     });
-    console.log("ye to chal rha tha");
+    // console.log("ye to chal rha tha");
   } catch (err) {
     console.log(err);
   }

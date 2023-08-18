@@ -2,6 +2,7 @@ const friendinvitation = require("../models/friendinvitationmodel");
 const { updatefriendspendinginvitations } = require("../sockets/friends");
 
 const friendreject = async (req, res) => {
+  console.log("rejection se pehele")
   try {
     const { id } = req.body;
     const { userId } = req.user;
@@ -9,15 +10,17 @@ const friendreject = async (req, res) => {
       senderId: id,
       recieverId: userId,
     });
+    console.log(invitationexists)
     if (invitationexists) {
       const { userId } = req.user;
       
     
-      updatefriendspendinginvitations(userId);
       await friendinvitation.findOneAndDelete({
         senderId: id,
         recieverId: userId,
       });
+      updatefriendspendinginvitations(userId);
+
       return res.status(200).json({
         success: true,
         message: "invitation deleted successfully",
