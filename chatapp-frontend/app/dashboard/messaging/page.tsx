@@ -119,11 +119,11 @@ const [messages,setmessages]=useState<any[]>([]);
 
 
     // window.list = pendingfriendinvitations;
-
+var socket:any;
     function Connectwithsocketserver() {
         if (auth) {
-            console.log("chalaya par nhi chala")
-            let socket = io("http://localhost:5002", {
+            // console.log("chalaya par nhi chala")
+             socket = io("http://localhost:5002", {
                 auth: {
                     token: auth.token
                 }
@@ -147,12 +147,18 @@ const [messages,setmessages]=useState<any[]>([]);
                 setfriends(friends);
 
             })
-            socket.on("online-users", (data) => {
+            socket.on("online-users", (data:any) => {
                 const { onlineusers } = data;
                 setonlineusers(onlineusers)
             })
         }
     }
+    const senddirectmessage=(data:any)=>{
+    socket.emit("direct-message",data)
+    
+    }
+
+    
 
     return (
         <>
