@@ -333,7 +333,7 @@ const [messages,setmessages]=useState<any[]>([]);
                 </nav>
                 <div className='bg-yellow-50 flex-grow flex h-[calc(100vh-56px)] overflow-y-auto'>
                     {/* FriendList */}
-                    <div className='h-full p-3 w-[25%] text-black'>
+                    <div className='h-full w-[25%] text-black'>
                         <div className='flex flex-col h-full bg-teal-50'>
                             <input type="text" className='w-full border-none' placeholder="Search for friends" />
                             <div className='flex-grow overflow-y-auto bg-red-100 border-t border-t-gray-300'>
@@ -365,7 +365,7 @@ const [messages,setmessages]=useState<any[]>([]);
                         </div>
                     </div>
                     {/* Messages */}
-                    <div className='h-full p-2 w-[75%] text-black'>
+                    <div className='h-full w-[75%] text-black'>
                         <div className='flex flex-col h-full bg-teal-50'>
                             {
                                 activeFriend !== null ?
@@ -373,8 +373,8 @@ const [messages,setmessages]=useState<any[]>([]);
                                         {/* Header */}
                                         <div className='flex items-center justify-between w-full p-3 bg-white'>
                                             <div className='flex items-center gap-5'>
-                                                <div className='h-12 w-12'>
-                                                    <img src={activeFriend?.profile || "/userAvatar.svg"} alt="" width={'48'} height={'48'} className='rounded-full border' />
+                                                <div className='h-12 w-12 border rounded-full overflow-hidden'>
+                                                    <img src={activeFriend?.profile || "/userAvatar.svg"} alt="" width={'48'} height={'48'} className='rounded-full' />
                                                 </div>
                                                 <div>
                                                     <p><b>{activeFriend?.username}</b></p>
