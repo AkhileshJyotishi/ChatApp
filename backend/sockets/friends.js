@@ -11,7 +11,7 @@ const updatefriendspendinginvitations = async (userId) => {
       })
       .populate("senderId", "_id username profile mail");
 
-    console.log("peding invitations  ", pendinginvitations);
+    // console.log("peding invitations  ", pendinginvitations);
 
     const recieverlist = socketstore.getactiveconnections(userId);
     // console.log("recieverlist "+ recieverlist)
@@ -31,7 +31,14 @@ const updatefriendspendinginvitations = async (userId) => {
     console.log(err);
   }
 };
+const friendslists=async()=>{
+  try{
 
+  }
+  catch(err){
+    
+  }
+}
 module.exports = {
   updatefriendspendinginvitations,
 };
