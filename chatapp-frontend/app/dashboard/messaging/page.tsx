@@ -167,7 +167,7 @@ export default function Page() {
                                                 className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
                                                 role="none"
                                             >
-                                                {auth.email}
+                                                {auth.email||auth.mail}
                                             </p>
                                         </div>
                                         <ul className="py-1" role="none">

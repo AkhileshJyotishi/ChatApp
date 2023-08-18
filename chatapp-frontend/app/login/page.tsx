@@ -14,7 +14,6 @@ export default function Page() {
     const [password, setPassword] = React.useState<string>("");
 
     const [loading, setLoading] = useState(false);
-    const [cookies, setCookie] = useCookies(["user"]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -25,11 +24,6 @@ export default function Page() {
         }
     }, [error])
 
-    function handleCookie(token: String) {
-        setCookie("user", token, {
-            path: "/"
-        });
-    }
     const handleImageSubmit = async () => {
         const formData = new FormData();
         formData.append('password', password);
@@ -42,8 +36,6 @@ export default function Page() {
             }
             );
             const tokencame = await response.data.message.token;
-            // Cookies.set('token',tokencame);
-            // handleCookie(tokencame);
             const data = await response.data.message.data
             if (tokencame) {
                 setAuth({ ...data, token: tokencame });
@@ -58,11 +50,13 @@ export default function Page() {
         setLoading(false);
     }
 
-    if (auth != null) {
-        //hereis problem is 
-        router.push('/dashboard/messaging');
-        return null;
-    }
+    useEffect(() => {
+        if (auth != null) {
+            router.push('/dashboard/messaging');
+        }
+    }, [auth])
+
+
 
 
     return (
@@ -165,7 +159,7 @@ export default function Page() {
                                 onChange={(e) => {
                                     setEmail(e.target.value);
                                 }}
-                                // pattern='/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/'
+                            // pattern='/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/'
                             />
                         </div>
                         <div>
