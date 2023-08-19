@@ -611,11 +611,13 @@ export default function Page() {
                                     </>
                                     : (
                                         <>
-                                            <div className='h-full w-full flex flex-col p-3'>
-                                                {/* <div>seelectfdlhlfd</div> */}
-                                                <div className='flex-grow items-end justify-end flex'>
+                                            <div>
+                                                <div>seelectfdlhlfd</div>
+                                                <div>
                                                     <Webrtc />
                                                 </div>
+
+
                                             </div>
 
                                         </>
