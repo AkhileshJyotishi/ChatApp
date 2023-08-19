@@ -81,6 +81,7 @@ export default function Page() {
     const [audioonly, setaudioonly] = useState(false);
     const [screensharingstream, setscreensharingstream] = useState(null);
     const [isscreensharingactive, setisscreensharingactive] = useState(false);
+    const [openroom,setopenroom]=useState(false)
     // const [openroom,setopenroom]=useState<boolean>();
 
     const Roombutton = () => {
@@ -238,8 +239,16 @@ export default function Page() {
 
             })
             socket.on("room-create", (data: any) => {
+                
                 console.log('Room details')
                 console.log('data   ', data)
+                setopenroom(true);
+                setisusercreator(true)
+                setisuserinroom(true)
+            })
+            socket.on("active-rooms",(data:any)=>{
+                console.log("active rooms came from socket ",data)
+                setactiverooms(data)
             })
 
 
@@ -269,7 +278,7 @@ export default function Page() {
     }
     const newroomcreated = (data: any) => {
         const { roomdetails } = data;
-        setRoomdetails(roomdetails);
+        setRoomdetails(roomdetails)
         
         
     }
@@ -572,11 +581,13 @@ export default function Page() {
                                     </>
                                     : (
                                         <>
-                                            <div className='h-full w-full flex flex-col p-3'>
-                                                {/* <div>seelectfdlhlfd</div> */}
-                                                <div className='flex-grow items-end justify-end flex'>
+                                            <div>
+                                                <div>seelectfdlhlfd</div>
+                                                <div>
                                                     <Webrtc />
                                                 </div>
+
+
                                             </div>
 
                                         </>

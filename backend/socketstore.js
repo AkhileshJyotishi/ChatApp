@@ -1,4 +1,5 @@
 const {v4:uuidv4}=require('uuid')
+const roomsupdates=require('./sockets/rooms')
 const connectedusers = new Map();
 let activerooms=[];
 let io = null;
@@ -52,7 +53,8 @@ const roomcreationhandle=(socket)=>{
     const roomdetails=addnewactiveroom(userid,socketid)
 socket.emit("room-create",{
 roomdetails
-})
+})  
+roomsupdates.updaterooms();
 
 }
 
@@ -84,5 +86,6 @@ module.exports = {
   getsocketserverinstance,
   getonlineusers,
   addnewactiveroom,
-  roomcreationhandle
+  roomcreationhandle,
+  activerooms
 };
