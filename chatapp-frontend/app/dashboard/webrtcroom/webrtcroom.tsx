@@ -81,7 +81,7 @@ export default function Webrtc() {
                 </div>
                 <div className='flex justify-between items-center gap-1 mx-4' style={isroominimized ? {marginBottom:"8px"}:{marginBlock:"20px"}}>
                     <div>
-                        <p className='text-white font-semibold' style={isroominimized ? {fontSize:"small"}:{fontSize:"medium"}}>{currentTime}</p>
+                        <p className='text-white font-semibold cursor-default' style={isroominimized ? {fontSize:"small"}:{fontSize:"medium"}}>{currentTime}</p>
                     </div>
                     <div className='flex justify-between items-center gap-3'>
                         <div onClick={() => { setScreenSharing(prev => !prev) }}>

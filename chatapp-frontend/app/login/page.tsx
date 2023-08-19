@@ -44,8 +44,9 @@ export default function Page() {
             } else {
                 setError(response.data.message);
             }
-        } catch (error) {
+        } catch (error:any) {
             console.error('Error Login:', error);
+            setError(error?.message);
         }
         setLoading(false);
     }
