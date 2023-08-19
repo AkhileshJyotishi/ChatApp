@@ -1,4 +1,6 @@
+const {v4:uuidv4}=require('uuid')
 const connectedusers = new Map();
+let activerooms=[];
 let io = null;
 const setsocketserverinstance = (ioinstance) => {
   // console.log("setsocketserverinstance working " , ioinstance);
@@ -42,11 +44,45 @@ const getonlineusers = () => {
   });
 };
 
+const roomcreationhandle=(socket)=>{
+  console.log("room is breing created")
+  const socketid=socket.id;
+    const userid = socket.user.data._id;
+
+    const roomdetails=addnewactiveroom(userid,socketid)
+socket.emit("room-create",{
+roomdetails
+})
+
+}
+
+const addnewactiveroom=(userid,socketid)=>{
+  const newactiveroom={
+    roomcreator:{
+      userid,
+      socketid
+    },
+    participants:[
+      {
+        userid,
+        socketid
+      }
+    ],
+    roomid:uuidv4()
+  }
+  activerooms.push(newactiveroom)
+  console.log(activerooms)  
+  return newactiveroom;
+
+}
+
 module.exports = {
   addnewconnecteduser,
   removeconnecteduser,
   getactiveconnections,
   setsocketserverinstance,
   getsocketserverinstance,
-  getonlineusers
+  getonlineusers,
+  addnewactiveroom,
+  roomcreationhandle
 };
