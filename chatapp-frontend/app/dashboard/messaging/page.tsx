@@ -248,7 +248,16 @@ export default function Page() {
             })
             socket.on("active-rooms",(data:any)=>{
                 console.log("active rooms came from socket ",data)
-                setactiverooms(data)
+                // setactiverooms(data)
+                const {activerooms}=data
+                activerooms.forEach((room:any)=>{
+                    
+                    friends2.forEach((element:any) => {
+                        if(element.id===room){
+                            
+                        }
+                    });
+                })
             })
 
 
