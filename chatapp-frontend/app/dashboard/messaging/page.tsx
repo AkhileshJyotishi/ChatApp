@@ -251,10 +251,10 @@ export default function Page() {
                 // setactiverooms(data)
                 const {activerooms}=data
                 activerooms.forEach((room:any)=>{
-                    
+                    const rooms=[];
                     friends2.forEach((element:any) => {
-                        if(element.id===room){
-                            
+                        if(element.id===room.creatorId){
+                            rooms.push({...room,creatorusername:element.username})
                         }
                     });
                 })
