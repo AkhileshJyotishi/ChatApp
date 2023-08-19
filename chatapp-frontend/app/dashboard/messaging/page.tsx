@@ -74,7 +74,7 @@ export default function Page() {
     //states of the great webrtc dream
     const [isuserinroom, setisuserinroom] = useState(false);
     const [isusercreator, setisusercreator] = useState(false);
-    const [roomdetails, setroomdetails] = useState(null);
+    const [Roomdetails, setRoomdetails] = useState(null);
     const [activerooms, setactiverooms] = useState([]);
     const [localstream, setlocalstream] = useState(null);
     const [remotestreams, setremotestreams] = useState([]);
@@ -84,14 +84,10 @@ export default function Page() {
     // const [openroom,setopenroom]=useState<boolean>();
 
     const Roombutton = () => {
-        const createnewroom = () => {
-            // setopenroom(true);
-            setisusercreator(true)
-            setisuserinroom(true)
-        }
+
         return (
             <>
-                <button onClick={() => { createnewroom() }}></button>
+                <button onClick={() => { createnewroom() }}>roombutton</button>
             </>
         )
     }
@@ -241,6 +237,12 @@ export default function Page() {
                 setfriends(friends);
 
             })
+            socket.on("room-create", (data: any) => {
+                console.log('Room details')
+                console.log('data   ', data)
+            })
+
+
             socket.on("online-users", (data: any) => {
                 const { onlineusers } = data;
                 setonlineusers(onlineusers)
@@ -255,8 +257,21 @@ export default function Page() {
     const senddirectmessage = (data: any) => {
         newSocket.emit("direct-message", data)
     }
-    const getDirectChatHistory = (id:any) => {
-        newSocket.emit("direct-chat-history", {recieveuserid:id})
+    const getDirectChatHistory = (id: any) => {
+        newSocket.emit("direct-chat-history", { recieveuserid: id })
+    }
+
+
+    const createnewroom = () => {
+        console.log("new room being created frontendJ")
+        newSocket.emit("room-create")
+        console.log("emmitor worminb")
+    }
+    const newroomcreated = (data: any) => {
+        const { roomdetails } = data;
+        setRoomdetails(roomdetails);
+        
+        
     }
     const handlesendmessage = () => {
         console.log("sending message to the server")
@@ -484,6 +499,9 @@ export default function Page() {
                                             token: auth.token
                                         })
                                     }}>send invitation</button>
+                                    <div>
+                                        <Roombutton />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -505,7 +523,7 @@ export default function Page() {
                                                 </div>
                                             </div>
                                             <div className='flex items-center gap-4 mr-3'>
-                                                <button className='mt-2 text-black'>
+                                                <button className='mt-2 text-black' onClick={() => { createnewroom() }}>
                                                     <img src="/telephone.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
                                                 <button className='mt-2 text-black'>
@@ -517,7 +535,7 @@ export default function Page() {
                                         {/* Chat */}
                                         <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
                                             {
-                                                messagesArray.length!=0 && messagesArray.map((message, key) => {
+                                                messagesArray.length != 0 && messagesArray.map((message, key) => {
                                                     return (
                                                         <div key={key} className={`${message.authorId._id === activeFriend.id ? 'text-left' : 'text-right'} m-3`}>
                                                             <span className={`${message.authorId._id !== activeFriend.id ? 'bg-green-300' : 'bg-gray-200'} p-3`}>{message.content}</span>
@@ -531,7 +549,7 @@ export default function Page() {
                                             <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' onChange={(e) => {
                                                 setmessage(e.target.value)
                                             }} />
-                                            {/* <div className='flex-grow bg-red-200 h-full'>
+                                            {/* <div className='flex-grow h-full bg-red-200'>
                                                 <Box
                                                     component="form"
                                                     noValidate

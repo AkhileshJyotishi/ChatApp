@@ -8,7 +8,7 @@ const {
   removeconnecteduser,
   setsocketserverinstance,
   getonlineusers,
-  getactiveconnections
+  getactiveconnections,roomcreationhandle
 } = require("./socketstore");
 
 // console.log(authsocket);
@@ -68,6 +68,7 @@ const directmessagehandler = async (socket, data) => {
   }
 };
 
+
 const registersocketserver = (server) => {
   // console.log("server connection ho rha h");
   io = require("socket.io")(server, {
@@ -95,11 +96,23 @@ const registersocketserver = (server) => {
       const conversation = await conversationmodel.findOne({
         participants: { $all: [userId, recieveuserid] }
       });
+
+
+
       console.log("direct chat histort specifiacally called ",conversation);
       if(conversation){
         updateChatHistory(conversation._id.toString(),socket.id)
       }
     })
+
+    socket.on("room-create",(data)=>{
+     roomcreationhandle(socket)
+          })
+
+
+
+
+
     socket.on("disconnect", () => {
       console.log("disconnected");
       disconnecthandler(socket);
