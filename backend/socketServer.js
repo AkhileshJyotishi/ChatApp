@@ -8,6 +8,7 @@ const {
   removeconnecteduser,
   setsocketserverinstance,
   getonlineusers,
+  getactiveconnections
 } = require("./socketstore");
 
 // console.log(authsocket);
@@ -34,8 +35,7 @@ const conversationmodel = require("./models/conversationmodel");
 const directmessagehandler = async (socket, data) => {
   console.log("direct message handler being handled");
   try {
-    // yha mistake ho skta h
-    const { userId } = socket.user;
+    const userId = socket.user.data._id;
     const { recieveuserid, content } = data;
 
     const message = await messagemodel.create({
@@ -44,17 +44,20 @@ const directmessagehandler = async (socket, data) => {
       date: new Date(),
       type: "Direct_Message",
     });
+    console.log("messaage came", message);
     const conversation = await conversationmodel.findOne({
       participants: { $all: [userId, recieveuserid] },
     });
     if (conversation) {
       conversation.messages.push(message._id);
       await conversation.save();
+      updateChatHistory(conversation._id.toString())
     } else {
-      const newconversation = await conversation.create({
+      const newconversation = await conversationmodel.create({
         messages: [message._id],
         participants: [userId, recieveuserid],
       });
+      updateChatHistory(conversation._id.toString())
     }
   } catch (err) {
     console.log(err);
@@ -86,6 +89,17 @@ const registersocketserver = (server) => {
     socket.on("direct-message", (data) => {
       directmessagehandler(socket, data);
     });
+    socket.on("direct-chat-history",async(data)=>{
+      const userId = socket.user.data._id;
+      const { recieveuserid } = data;
+      const conversation = await conversationmodel.findOne({
+        participants: { $all: [userId, recieveuserid] }
+      });
+      console.log("direct chat histort specifiacally called ",conversation);
+      if(conversation){
+        updateChatHistory(conversation._id.toString(),socket.id)
+      }
+    })
     socket.on("disconnect", () => {
       console.log("disconnected");
       disconnecthandler(socket);
@@ -96,6 +110,37 @@ const emitonlineusers = () => {
   const onlineusers = getonlineusers();
   io.emit("online-users", { onlineusers });
 };
+
+const updateChatHistory = async (conversationId, toSpcificSocketId = null) => {
+  const conversation = await conversationmodel.findById(conversationId).populate({
+    path: 'messages',
+    model: 'message',
+    populate: {
+      path: "authorId",
+      model: "user",
+      select: "username _id"
+    }
+  })
+  if (conversation) {
+    console.log("conversation2",conversation)
+    if (toSpcificSocketId) {
+      console.log("to specific socket id ",toSpcificSocketId);
+      return io.to(toSpcificSocketId).emit("direct-chat-history", {
+        messages: conversation.messages,
+        participants: conversation.participants
+      })
+    }
+    conversation.participants.forEach(userId => {
+      const activeConnection = getactiveconnections(userId.toString());
+      activeConnection.forEach((socketid) => {
+        io.to(socketid).emit("direct-chat-history", {
+          messages: conversation.messages,
+          participants: conversation.participants
+        })
+      })
+    })
+  }
+}
 
 setInterval(() => {
   // getonlineusers();

@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const schema = mongoose.Schema;
 const messageschema = new schema({
-  author: [
+  authorId: 
     {
       type: schema.Types.ObjectId,
       ref: "user",
     },
-  ],
+    
   content: { type: String },
   date: { type: Date },
   type: { type: String },

@@ -9,6 +9,7 @@ const verifytokensocket=(socket,next)=>{
     try{
         const decoded=jwt.verify(token,process.env.JWTSecretKey)
         socket.user=decoded
+        console.log("socket.user check ",socket.user);
 
     }
     catch(err){

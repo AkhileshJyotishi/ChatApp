@@ -58,40 +58,40 @@ export default function Page() {
     // ]
     const messagesarray = [
         {
-            owner:true,
-            messageText : "hello" ,
-            timeStamp :"2pm"
+            owner: true,
+            messageText: "hello",
+            timeStamp: "2pm"
         },
         {
-            owner:false,
-            messageText : "brother" ,
-            timeStamp :"2pm"
+            owner: false,
+            messageText: "brother",
+            timeStamp: "2pm"
         }
     ]
-    const [messagesArray,setMessageArray]=useState(messagesarray);
+    const [messagesArray, setMessageArray] = useState<any[]>([]);
 
 
-//states of the great webrtc dream
-    const [isuserinroom,setisuserinroom]=useState(false);
-    const [isusercreator,setisusercreator]=useState(false);
-    const [roomdetails,setroomdetails]=useState(null);
-    const [activerooms,setactiverooms]=useState([]);
-    const [localstream,setlocalstream ]=useState(null);
-    const [remotestreams,setremotestreams ]=useState([]);
-    const [audioonly,setaudioonly ]=useState(false);
-    const [screensharingstream,setscreensharingstream ]=useState(null);
-    const [isscreensharingactive,setisscreensharingactive ]=useState(false);
-// const [openroom,setopenroom]=useState<boolean>();
+    //states of the great webrtc dream
+    const [isuserinroom, setisuserinroom] = useState(false);
+    const [isusercreator, setisusercreator] = useState(false);
+    const [roomdetails, setroomdetails] = useState(null);
+    const [activerooms, setactiverooms] = useState([]);
+    const [localstream, setlocalstream] = useState(null);
+    const [remotestreams, setremotestreams] = useState([]);
+    const [audioonly, setaudioonly] = useState(false);
+    const [screensharingstream, setscreensharingstream] = useState(null);
+    const [isscreensharingactive, setisscreensharingactive] = useState(false);
+    // const [openroom,setopenroom]=useState<boolean>();
 
-    const Roombutton=()=>{
-        const createnewroom=()=>{
+    const Roombutton = () => {
+        const createnewroom = () => {
             // setopenroom(true);
             setisusercreator(true)
             setisuserinroom(true)
         }
         return (
             <>
-            <button onClick={()=>{createnewroom()}}></button>
+                <button onClick={() => { createnewroom() }}></button>
             </>
         )
     }
@@ -113,7 +113,7 @@ export default function Page() {
 
 
 
-    
+
 
     const { auth, setAuth } = useContext(AuthContext);
     const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
@@ -122,7 +122,10 @@ export default function Page() {
     const [chattype, setchattype] = useState<any>("");
     const [chatactions, setchatactions] = useState<any>("");
     const [messages, setmessages] = useState<any[]>([]);
-const [message,setmessage]=useState<any>("");
+    const [message, setmessage] = useState<any>("");
+
+    // window.friend = activeFriend;
+    // window.autth = auth;
 
 
 
@@ -197,11 +200,18 @@ const [message,setmessage]=useState<any>("");
         }
     }
 
+    useEffect(() => {
+        if (activeFriend) {
+            console.log("use effect chala active wala");
+            getDirectChatHistory(activeFriend.id);
+        }
+    }, [activeFriend])
 
 
 
 
     // window.list = pendingfriendinvitations;
+    const [newSocket, setNewSocket] = useState<any>(null);
     var socket: any;
     function Connectwithsocketserver() {
         if (auth) {
@@ -214,6 +224,7 @@ const [message,setmessage]=useState<any>("");
             socket.on("connect", () => {
                 console.log("successfully connected to the server");
                 console.log(socket.id);
+                setNewSocket(socket);
             });
             // socket.on("friend", (data) => {
             //     console.log("i am fool", data)
@@ -234,30 +245,37 @@ const [message,setmessage]=useState<any>("");
                 const { onlineusers } = data;
                 setonlineusers(onlineusers)
             })
+            socket.on("direct-chat-history", (data: any) => {
+                console.log('direct chat history', data)
+                const messages = data.messages.reverse();
+                setMessageArray(messages);
+            })
         }
     }
-    const senddirectmessage=(data:any)=>{
-        console.log(data);
-    socket.emit("direct-message",data)
-    
+    const senddirectmessage = (data: any) => {
+        newSocket.emit("direct-message", data)
     }
-const handlesendmessage=()=>{
-    console.log("sending message to the server")
-    
-    // setmessages()
-    // setmessage("");
-    if(message.length>0){
-        senddirectmessage({
-            //active message wale ki id
-            // recieveuserId:
-            content:message
-            
-        })
+    const getDirectChatHistory = (id:any) => {
+        newSocket.emit("direct-chat-history", {recieveuserid:id})
     }
-    
-}
+    const handlesendmessage = () => {
+        console.log("sending message to the server")
 
-    
+        // setmessages()
+        // setmessage("");
+        if (message.length > 0) {
+            senddirectmessage({
+                //active message wale ki id
+                // recieveuserId:
+                content: message,
+                recieveuserid: activeFriend.id
+
+            })
+        }
+
+    }
+
+
 
     return (
         <>
@@ -448,6 +466,7 @@ const handlesendmessage=()=>{
                                             <div key={key} className='p-3 bg-white border-b cursor-pointer border-b-gray-300 hover:bg-gray-50'
                                                 onClick={() => {
                                                     setActiveFriend(friend);
+
                                                 }}
                                             >
                                                 <h2>{friend.username}</h2>
@@ -498,10 +517,10 @@ const handlesendmessage=()=>{
                                         {/* Chat */}
                                         <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
                                             {
-                                                messagesArray.map((message,key)=>{
-                                                    return(
-                                                        <div key={key} className={`${ message.owner ? 'text-right' : 'text-left' } m-3`}>
-                                                            <span className={`${ message.owner ? 'bg-green-300' : 'bg-gray-200' } p-3`}>{message.messageText}</span>
+                                                messagesArray.length!=0 && messagesArray.map((message, key) => {
+                                                    return (
+                                                        <div key={key} className={`${message.authorId._id === activeFriend.id ? 'text-left' : 'text-right'} m-3`}>
+                                                            <span className={`${message.authorId._id !== activeFriend.id ? 'bg-green-300' : 'bg-gray-200'} p-3`}>{message.content}</span>
                                                         </div>
                                                     )
                                                 })
@@ -509,21 +528,41 @@ const handlesendmessage=()=>{
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
-                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' />
-                                            <button className='p-2'>Send</button>
+                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' onChange={(e) => {
+                                                setmessage(e.target.value)
+                                            }} />
+                                            {/* <div className='flex-grow bg-red-200 h-full'>
+                                                <Box
+                                                    component="form"
+                                                    noValidate
+                                                    sx={{
+                                                        '& .MuiTextField-root': { ml: -1.5, width: 'fullWidth',height:"full" },
+                                                    }}
+                                                >
+                                                    <CssTextField
+                                                        label=""
+                                                        id="custom-css-outlined-input"
+                                                        multiline
+                                                        fullWidth
+                                                        autoFocus
+                                                        spellCheck="false"
+                                                    />
+                                                </Box>
+                                            </div> */}
+                                            <button className='p-2' onClick={() => { handlesendmessage() }}>Send</button>
                                         </div>
                                     </>
                                     : (
                                         <>
-                                        <div>
-                                            <div>seelectfdlhlfd</div>
                                             <div>
-                                                <Webrtc/>
+                                                <div>seelectfdlhlfd</div>
+                                                <div>
+                                                    <Webrtc />
+                                                </div>
+
+
                                             </div>
-                                            
-                                           
-                                        </div>
-                                        
+
                                         </>
                                     )
 
