@@ -280,7 +280,7 @@ export default function Page() {
     return (
         <>
             {auth && <div className='flex flex-col w-screen h-screen'>
-                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-[#272727]dark:border-gray-700">
                     <div className="px-3 py-3 lg:px-5 lg:pl-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center justify-start">
@@ -506,7 +506,7 @@ export default function Page() {
                     </div>
                     {/* Messages */}
                     <div className='h-full w-[80%] text-black'>
-                        <div className='flex flex-col h-full bg-teal-50 overflow-hidden'>
+                        <div className='flex flex-col h-full bg-[#272727] overflow-hidden'>
                             {
                                 activeFriend !== null ?
                                     <>
@@ -583,7 +583,15 @@ export default function Page() {
                                             </div>
                                             <input type="text" id='sendMessageInput' className='flex-grow text-sm text-white bg-[#272727] border-none rounded outline-none' placeholder='Type a message' value={message} onChange={(e) => {
                                                 setmessage(e.target.value)
-                                            }} />
+                                            }}
+                                            
+                                            onKeyDown={(e: any) => {
+                                                if (e.key === "Enter" && e.ctrlKey) {
+                                                    handlesendmessage();
+                                                }
+                                            }}
+
+                                            />
                                             {/* <div className='flex-grow h-full bg-red-200'>
                                                 <Box
                                                     component="form"
@@ -611,15 +619,12 @@ export default function Page() {
                                     </>
                                     : (
                                         <>
-                                            <div>
-                                                <div>seelectfdlhlfd</div>
-                                                <div>
+                                            <div className='h-full w-full flex flex-col p-3'>
+                                                <div className='text-white'>Select some person to chat</div>
+                                                <div className='flex-grow items-end justify-end flex'>
                                                     <Webrtc />
                                                 </div>
-
-
                                             </div>
-
                                         </>
                                     )
 
