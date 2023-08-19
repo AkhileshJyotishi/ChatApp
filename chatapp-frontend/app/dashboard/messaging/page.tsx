@@ -68,52 +68,14 @@ export default function Page() {
             timeStamp: "2pm"
         }
     ]
-    const [messagesArray, setMessageArray] = useState<any[]>([]);
 
 
-    //states of the great webrtc dream
-    const [isuserinroom, setisuserinroom] = useState(false);
-    const [isusercreator, setisusercreator] = useState(false);
-    const [Roomdetails, setRoomdetails] = useState(null);
-    const [activerooms, setactiverooms] = useState([]);
-    const [localstream, setlocalstream] = useState(null);
-    const [remotestreams, setremotestreams] = useState([]);
-    const [audioonly, setaudioonly] = useState(false);
-    const [screensharingstream, setscreensharingstream] = useState(null);
-    const [isscreensharingactive, setisscreensharingactive] = useState(false);
-    const [openroom,setopenroom]=useState(false)
     // const [openroom,setopenroom]=useState<boolean>();
-
-    const Roombutton = () => {
-
-        return (
-            <>
-                <button onClick={() => { createnewroom() }}>roombutton</button>
-            </>
-        )
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
     const { auth, setAuth } = useContext(AuthContext);
-    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
+    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress,Connectwithsocketserver,newSocket,setNewSocket,messagesArray } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
     const [chattype, setchattype] = useState<any>("");
@@ -143,25 +105,6 @@ export default function Page() {
             )
             console.log("invitation bhij gya")
             console.log(friendinvitation)
-            //     //ambiguous---if error
-            // if (friendinvitation.data.message) {
-
-            //     console.log(friendinvitation.data.message);
-
-            // }
-            // else {
-            //     //    console.log( dispatch({ type: 'Set_Pending_friend_invitations', pendingfriendinvitations: friendinvitation }))
-            //     // </clg> c
-            //     console.log(friendinvitation);
-            //     // setfriends()
-            //     setpendingfriendinvitations((prev: any[]) => {
-            //         return [...prev, friendinvitation.data]
-            //         // ...prev, friendinvitation
-            //     })
-            // }
-
-
-
         }
         catch (err) {
 
@@ -208,70 +151,51 @@ export default function Page() {
 
 
     // window.list = pendingfriendinvitations;
-    const [newSocket, setNewSocket] = useState<any>(null);
-    var socket: any;
-    function Connectwithsocketserver() {
-        if (auth) {
-            // console.log("chalaya par nhi chala")
-            socket = io("http://localhost:5002", {
-                auth: {
-                    token: auth.token
-                }
-            });
-            socket.on("connect", () => {
-                console.log("successfully connected to the server");
-                console.log(socket.id);
-                setNewSocket(socket);
-            });
-            // socket.on("friend", (data) => {
-            //     console.log("i am fool", data)
-            // })
-            socket.on("friend", (data: any) => {
-                // console.log("socket m reieve ho rha h"); 
-                console.log(data);
-                const { pendinginvitations } = data;
-                setpendingfriendinvitations(pendinginvitations)
-            });
-            socket.on("friends-list", (data: any) => {
-                console.log(data)
-                const { friends } = data;
-                setfriends(friends);
+    // function Connectwithsocketserver() {
+    //     if (auth) {
+    //         // console.log("chalaya par nhi chala")
+    //         socket = io("http://localhost:5002", {
+    //             auth: {
+    //                 token: auth.token
+    //             }
+    //         });
+    //         socket.on("connect", () => {
+    //             console.log("successfully connected to the server");
+    //             console.log(socket.id);
+    //             setNewSocket(socket);
+    //         });
+    //         // socket.on("friend", (data) => {
+    //         //     console.log("i am fool", data)
+    //         // })
+    //         socket.on("friend", (data: any) => {
+    //             // console.log("socket m reieve ho rha h"); 
+    //             console.log(data);
+    //             const { pendinginvitations } = data;
+    //             setpendingfriendinvitations(pendinginvitations)
+    //         });
+    //         socket.on("friends-list", (data: any) => {
+    //             console.log(data)
+    //             const { friends } = data;
+    //             setfriends(friends);
 
-            })
-            socket.on("room-create", (data: any) => {
-                
-                console.log('Room details')
-                console.log('data   ', data)
-                setopenroom(true);
-                setisusercreator(true)
-                setisuserinroom(true)
-            })
-            socket.on("active-rooms",(data:any)=>{
-                console.log("active rooms came from socket ",data)
-                // setactiverooms(data)
-                const {activerooms}=data
-                activerooms.forEach((room:any)=>{
-                    const rooms=[];
-                    friends2.forEach((element:any) => {
-                        if(element.id===room.creatorId){
-                            rooms.push({...room,creatorusername:element.username})
-                        }
-                    });
-                })
-            })
+    //         })
+    //         socket.on("room-create", (data: any) => {
+    //             console.log('Room details')
+    //             console.log('data   ', data)
+    //         })
 
 
-            socket.on("online-users", (data: any) => {
-                const { onlineusers } = data;
-                setonlineusers(onlineusers)
-            })
-            socket.on("direct-chat-history", (data: any) => {
-                console.log('direct chat history', data)
-                const messages = data.messages.reverse();
-                setMessageArray(messages);
-            })
-        }
-    }
+    //         socket.on("online-users", (data: any) => {
+    //             const { onlineusers } = data;
+    //             setonlineusers(onlineusers)
+    //         })
+    //         socket.on("direct-chat-history", (data: any) => {
+    //             console.log('direct chat history', data)
+    //             const messages = data.messages.reverse();
+    //             setMessageArray(messages);
+    //         })
+    //     }
+    // }
     const senddirectmessage = (data: any) => {
         newSocket.emit("direct-message", data)
     }
@@ -280,17 +204,17 @@ export default function Page() {
     }
 
 
-    const createnewroom = () => {
-        console.log("new room being created frontendJ")
-        newSocket.emit("room-create")
-        console.log("emmitor worminb")
-    }
-    const newroomcreated = (data: any) => {
-        const { roomdetails } = data;
-        setRoomdetails(roomdetails)
+    // const createnewroom = () => {
+    //     console.log("new room being created frontendJ")
+    //     newSocket.emit("room-create")
+    //     console.log("emmitor worminb")
+    // }
+    // const newroomcreated = (data: any) => {
+    //     const { roomdetails } = data;
+    //     setRoomdetails(roomdetails);
         
         
-    }
+    // }
     const handlesendmessage = () => {
         console.log("sending message to the server")
 
@@ -517,9 +441,6 @@ export default function Page() {
                                             token: auth.token
                                         })
                                     }}>send invitation</button>
-                                    <div>
-                                        <Roombutton />
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -541,7 +462,7 @@ export default function Page() {
                                                 </div>
                                             </div>
                                             <div className='flex items-center gap-4 mr-3'>
-                                                <button className='mt-2 text-black' onClick={() => { createnewroom() }}>
+                                                <button className='mt-2 text-black'>
                                                     <img src="/telephone.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
                                                 <button className='mt-2 text-black'>
@@ -553,7 +474,7 @@ export default function Page() {
                                         {/* Chat */}
                                         <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
                                             {
-                                                messagesArray.length != 0 && messagesArray.map((message, key) => {
+                                                messagesArray.length != 0 && messagesArray.map((message:any, key:any) => {
                                                     return (
                                                         <div key={key} className={`${message.authorId._id === activeFriend.id ? 'text-left' : 'text-right'} m-3`}>
                                                             <span className={`${message.authorId._id !== activeFriend.id ? 'bg-green-300' : 'bg-gray-200'} p-3`}>{message.content}</span>
