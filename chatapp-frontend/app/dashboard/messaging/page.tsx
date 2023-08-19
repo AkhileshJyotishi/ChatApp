@@ -554,13 +554,11 @@ export default function Page() {
                                     </>
                                     : (
                                         <>
-                                            <div>
-                                                <div>seelectfdlhlfd</div>
-                                                <div>
+                                            <div className='h-full w-full flex flex-col p-3'>
+                                                {/* <div>seelectfdlhlfd</div> */}
+                                                <div className='flex-grow items-end justify-end flex'>
                                                     <Webrtc />
                                                 </div>
-
-
                                             </div>
 
                                         </>
