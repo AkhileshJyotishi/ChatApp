@@ -6,7 +6,9 @@ import { socketsContext } from '@/contexts/socketcontext';
 export default function Page() {
 
     const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress,Connectwithsocketserver,newSocket,setNewSocket } = useContext(socketsContext);
-
+    useEffect(()=>{
+        Connectwithsocketserver();
+    },[])
     //states of the great webrtc dream
     const [isuserinroom, setisuserinroom] = useState(false);
     const [isusercreator, setisusercreator] = useState(false);
@@ -32,7 +34,7 @@ export default function Page() {
     }
     return (
         <div>
-            {/* <Button variant="contained" onClick={() => { createnewroom() }}>Create meetings</Button> */}
+            <Button variant="contained" onClick={() => { createnewroom() }}>Create meetings</Button>
         </div>
     )
 }
