@@ -1,2 +1,0 @@
-//build messages component here
-    

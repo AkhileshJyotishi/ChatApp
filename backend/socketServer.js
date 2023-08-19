@@ -28,12 +28,45 @@ const newconnectionhandle = async (socket, io) => {
 const disconnecthandler = (socket) => {
   removeconnecteduser(socket.id);
 };
+const messagemodel = require("./models/messagemodel");
+const conversationmodel = require("./models/conversationmodel");
 
+const directmessagehandler = async (socket, data) => {
+  console.log("direct message handler being handled");
+  try {
+    const { userId } = socket.user;
+    const { recieveuserid, content } = data;
 
+    const message = await messagemodel.create({
+      content,
+      authorId: userId,
+      date: new Date(),
+      type: "Direct_Message",
+    });
+    const conversation = await conversationmodel.findOne({
+      participants: { $all: [userId, recieveuserid] },
+    });
+    if (conversation) {
+      conversation.messages.push(message._id);
+      await conversation.save();
+    } else {
+      const newconversation = await conversation.create({
+        messages: [message._id],
+        participants: [userId, recieveuserid],
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      success: false,
+      message: err,
+    });
+  }
+};
 
 const registersocketserver = (server) => {
   // console.log("server connection ho rha h");
-   io = require("socket.io")(server, {
+  io = require("socket.io")(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -43,13 +76,15 @@ const registersocketserver = (server) => {
   setsocketserverinstance(io);
   io.use((socket, next) => verifytokensocket(socket, next));
 
-
   io.on("connection", (socket) => {
     console.log("user connected " + socket.id);
 
     newconnectionhandle(socket, io);
     // console.log(object)
     emitonlineusers();
+    socket.on("direct-message", (data) => {
+      directmessagehandler(socket, data);
+    });
     socket.on("disconnect", () => {
       console.log("disconnected");
       disconnecthandler(socket);

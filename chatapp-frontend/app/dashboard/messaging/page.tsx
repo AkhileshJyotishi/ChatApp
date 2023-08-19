@@ -6,6 +6,7 @@ import { trace } from 'console';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
+import Webrtc from '../webrtcroom/webrtcroom';
 
 export default function Page() {
     // const friends = [
@@ -33,6 +34,43 @@ export default function Page() {
     // ]
 
 
+//states of the great webrtc dream
+    const [isuserinroom,setisuserinroom]=useState(false);
+    const [isusercreator,setisusercreator]=useState(false);
+    const [roomdetails,setroomdetails]=useState(null);
+    const [activerooms,setactiverooms]=useState([]);
+    const [localstream,setlocalstream ]=useState(null);
+    const [remotestreams,setremotestreams ]=useState([]);
+    const [audioonly,setaudioonly ]=useState(false);
+    const [screensharingstream,setscreensharingstream ]=useState(null);
+    const [isscreensharingactive,setisscreensharingactive ]=useState(false);
+// const [openroom,setopenroom]=useState<boolean>();
+
+    const Roombutton=()=>{
+        const createnewroom=()=>{
+            // setopenroom(true);
+            setisusercreator(true)
+            setisuserinroom(true)
+        }
+        return (
+            <>
+            <button onClick={()=>{createnewroom()}}></button>
+            </>
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+
     const { auth, setAuth } = useContext(AuthContext);
     const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
@@ -40,6 +78,7 @@ export default function Page() {
 const [chattype,setchattype]=useState<any>("");
 const [chatactions,setchatactions]=useState<any>("");
 const [messages,setmessages]=useState<any[]>([]);
+const [message,setmessage]=useState<any>("");
 
 
 
@@ -154,9 +193,25 @@ var socket:any;
         }
     }
     const senddirectmessage=(data:any)=>{
+        console.log(data);
     socket.emit("direct-message",data)
     
     }
+const handlesendmessage=()=>{
+    console.log("sending message to the server")
+    
+    // setmessages()
+    // setmessage("");
+    if(message.length>0){
+        senddirectmessage({
+            //active message wale ki id
+            // recieveuserId:
+            content:message
+            
+        })
+    }
+    
+}
 
     
 
@@ -379,7 +434,7 @@ var socket:any;
                                         {/* Header */}
                                         <div className='flex items-center justify-between w-full p-3 bg-white'>
                                             <div className='flex items-center gap-5'>
-                                                <div className='h-12 w-12 border rounded-full overflow-hidden'>
+                                                <div className='w-12 h-12 overflow-hidden border rounded-full'>
                                                     <img src={activeFriend?.profile || "/userAvatar.svg"} alt="" width={'48'} height={'48'} className='rounded-full' />
                                                 </div>
                                                 <div>
@@ -403,14 +458,24 @@ var socket:any;
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
-                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' />
+                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' onChange={(e)=>{
+                                                setmessage(e.target.value)
+                                            }}/>
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>
                                     : (
+                                        <>
                                         <div>
-                                            Select some friend to chat
+                                            <div>seelectfdlhlfd</div>
+                                            <div>
+                                                <Webrtc/>
+                                            </div>
+                                            
+                                           
                                         </div>
+                                        
+                                        </>
                                     )
 
                             }
