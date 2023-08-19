@@ -18,6 +18,7 @@ import CallIcon from '@mui/icons-material/Call';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 const CssTextField = styled(TextField)({
 
     '& label.Mui-focused': {
@@ -280,7 +281,7 @@ export default function Page() {
     return (
         <>
             {auth && <div className='flex flex-col w-screen h-screen'>
-                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-[#272727]dark:border-gray-700">
+                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-[#272727] dark:border-gray-700">
                     <div className="px-3 py-3 lg:px-5 lg:pl-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center justify-start">
@@ -323,11 +324,16 @@ export default function Page() {
                             <div className='flex items-center gap-4'>
                                 <div className='relative'>
                                     <div>
-                                        <img src="/notificationBell.svg" alt="" width={20} height={20}
+                                        <IconButton style={{color:"white"}} onClick={()=>{
+                                            document.getElementById("notification")?.classList.toggle("hidden");
+                                        }}>
+                                            <NotificationsActiveIcon />
+                                        </IconButton>
+                                        {/* <img src="/notificationBell.svg" alt="" width={20} height={20}
                                             onClick={() => {
                                                 document.getElementById("notification")?.classList.toggle("hidden");
                                             }}
-                                        />
+                                        /> */}
                                     </div>
                                     {pendingfriendinvitations.length > 0 && <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
                                         {pendingfriendinvitations.length}
@@ -584,12 +590,12 @@ export default function Page() {
                                             <input type="text" id='sendMessageInput' className='flex-grow text-sm text-white bg-[#272727] border-none rounded outline-none' placeholder='Type a message' value={message} onChange={(e) => {
                                                 setmessage(e.target.value)
                                             }}
-                                            
-                                            onKeyDown={(e: any) => {
-                                                if (e.key === "Enter" && e.ctrlKey) {
-                                                    handlesendmessage();
-                                                }
-                                            }}
+
+                                                onKeyDown={(e: any) => {
+                                                    if (e.key === "Enter" && e.ctrlKey) {
+                                                        handlesendmessage();
+                                                    }
+                                                }}
 
                                             />
                                             {/* <div className='flex-grow h-full bg-red-200'>
