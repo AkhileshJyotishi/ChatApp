@@ -2,6 +2,9 @@
 
 import { AuthContext } from '@/contexts/authContext';
 import { socketsContext } from '@/contexts/socketcontext';
+import { IconButton } from '@mui/material';
+import CloseFullscreenIcon  from '@mui/icons-material/CloseFullscreen';
+import OpeninFullIcon  from '@mui/icons-material/OpenInFull';
 import axios from 'axios';
 import { trace } from 'console';
 import { useRouter } from 'next/navigation';
@@ -10,7 +13,7 @@ import io from "socket.io-client";
 
 const fullscreenroomstyle = {
     width: "100%",
-    height: "100vh"
+    height: "100%"
 }
 const minimizedroomstyle = {
     bottom: "0px",
@@ -30,10 +33,10 @@ export default function Webrtc() {
     return (
         <>
             <div className='absolute flex flex-col items-center justify-center rounded-xl bg-[#202225]' style={isroominimized ? minimizedroomstyle : fullscreenroomstyle}>
-                <button onClick={() => { roomresizehandler() }}>
-
-                    cfgchgfchcg
-                </button>
+                <IconButton style={{color:'white'} } onClick={()=>{  roomresizehandler();}}>
+                    {isroominimized ? <OpeninFullIcon/>:<CloseFullscreenIcon/>}
+                </IconButton>
+               
 
             </div>
         </>
