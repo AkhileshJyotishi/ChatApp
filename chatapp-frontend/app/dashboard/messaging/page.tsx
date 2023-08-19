@@ -116,6 +116,7 @@ export default function Page() {
             )
             console.log("invitation bhij gya")
             console.log(friendinvitation)
+            settargetmailaddress("");
         }
         catch (err) {
 
@@ -489,7 +490,11 @@ export default function Page() {
                             </div>
                             <div >
                                 <div className='flex mb-5 mt-2 gap-1 rounded px-2 mx-2 items-center justify-between bg-[#343434] border-b border-[#d7d7d7]'>
-                                    <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Send invitation" />
+                                    <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Send invitation" 
+                                    value={targetmailaddress}
+                                    onChange={(e:any)=>{
+                                        settargetmailaddress(e.target.value);
+                                    }} />
                                     <IconButton style={{ fontSize: "small", color: "white" }} onClick={() => {
                                         if (targetmailaddress.length > 0) {
                                             sendfriendinvitation({
