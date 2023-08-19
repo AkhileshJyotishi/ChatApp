@@ -6,6 +6,43 @@ import { trace } from 'console';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { alpha, styled } from '@mui/material/styles';
+
+const CssTextField = styled(TextField)({
+
+    '& label.Mui-focused': {
+        color: 'red',
+    },
+    '& .MuiInput-underline:after': {
+        borderBottomWidth: '0',
+    },
+    '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+            borderColor: 'red',
+            borderWidth: '0',
+        },
+        '&:hover fieldset': {
+            borderColor: 'red',
+            borderWidth: '0',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: 'red',
+            borderWidth: '0',
+        },
+    },
+    '& .MuiInputBase-root': {
+        margin: '-1px 13px', // Set margin to 0
+        padding: '0',
+
+    },
+    '& .MuiInputBase-input': {
+        fontSize: '16px',
+        color: '#4b5563',
+        lineHeight: '1.5rem',
+    },
+});
 import Webrtc from '../webrtcroom/webrtcroom';
 
 export default function Page() {
@@ -19,19 +56,19 @@ export default function Page() {
     //         imageUrl: ""
     //     }
     // ]
-    // const dara = [
-    //     {
-    //         "_id": "64df3edc8627375648426f59",
-    //         "senderId": {
-    //             "_id": "64dc9b7d5d0762a82138a381",
-    //             "username": "Akhilesh",
-    //             "mail": "abc@gmail.com",
-    //             "profile": "https://res.cloudinary.com/dfl98cqja/image/upload/v1692175041/doraemon.jpg"
-    //         },
-    //         "recieverId": "64df0c2a645169a09132c6f1",
-    //         "__v": 0
-    //     }
-    // ]
+    const messagesarray = [
+        {
+            owner:true,
+            messageText : "hello" ,
+            timeStamp :"2pm"
+        },
+        {
+            owner:false,
+            messageText : "brother" ,
+            timeStamp :"2pm"
+        }
+    ]
+    const [messagesArray,setMessageArray]=useState(messagesarray);
 
 
 //states of the great webrtc dream
@@ -69,15 +106,22 @@ export default function Page() {
 
 
 
+
+
+
+
+
+
+
     
 
     const { auth, setAuth } = useContext(AuthContext);
     const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
-const [chattype,setchattype]=useState<any>("");
-const [chatactions,setchatactions]=useState<any>("");
-const [messages,setmessages]=useState<any[]>([]);
+    const [chattype, setchattype] = useState<any>("");
+    const [chatactions, setchatactions] = useState<any>("");
+    const [messages, setmessages] = useState<any[]>([]);
 const [message,setmessage]=useState<any>("");
 
 
@@ -158,11 +202,11 @@ const [message,setmessage]=useState<any>("");
 
 
     // window.list = pendingfriendinvitations;
-var socket:any;
+    var socket: any;
     function Connectwithsocketserver() {
         if (auth) {
             // console.log("chalaya par nhi chala")
-             socket = io("http://localhost:5002", {
+            socket = io("http://localhost:5002", {
                 auth: {
                     token: auth.token
                 }
@@ -186,7 +230,7 @@ var socket:any;
                 setfriends(friends);
 
             })
-            socket.on("online-users", (data:any) => {
+            socket.on("online-users", (data: any) => {
                 const { onlineusers } = data;
                 setonlineusers(onlineusers)
             })
@@ -268,7 +312,7 @@ const handlesendmessage=()=>{
                                         />
                                     </div>
                                     {pendingfriendinvitations.length > 0 && <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
-                                        { pendingfriendinvitations.length}
+                                        {pendingfriendinvitations.length}
                                     </div>}
                                     <div
                                         className="z-50 hidden  my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-5 right-0 min-w-[200px]"
@@ -452,15 +496,20 @@ const handlesendmessage=()=>{
                                             </div>
                                         </div>
                                         {/* Chat */}
-                                        <div className='flex-grow overflow-y-auto'>
-                                            Hello<br></br>
-                                            Hello<br></br>
+                                        <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
+                                            {
+                                                messagesArray.map((message,key)=>{
+                                                    return(
+                                                        <div key={key} className={`${ message.owner ? 'text-right' : 'text-left' } m-3`}>
+                                                            <span className={`${ message.owner ? 'bg-green-300' : 'bg-gray-200' } p-3`}>{message.messageText}</span>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
                                         </div>
                                         {/* Send Message */}
                                         <div className='flex'>
-                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' onChange={(e)=>{
-                                                setmessage(e.target.value)
-                                            }}/>
+                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' />
                                             <button className='p-2'>Send</button>
                                         </div>
                                     </>
