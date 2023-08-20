@@ -37,13 +37,13 @@ export default function Page() {
     };
     const defaultconstraints = {
         audio: true,
-        video: false,
+        video: true,
         // we can also use video:{
         // width:
         // height:
         // }
     };
-    const getlocalstreampreview = (onlyaudio = false, callback: any) => {
+    const getlocalstreampreview = (onlyaudio = audioonly, callback: any) => {
         const constraints = onlyaudio ? onlyaudioconstraints : defaultconstraints;
         navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
             console.log("localstreampreview func ke andar   ", stream)
@@ -71,7 +71,7 @@ export default function Page() {
             newSocket.emit("room-create")
             console.log("emmitor worminb")
         }
-        getlocalstreampreview(false, successcallback)
+        getlocalstreampreview(audioonly, successcallback)
 
     }
     //this function is for the room created by us
@@ -82,17 +82,27 @@ export default function Page() {
 
     }
     const joinroom = (roomid: any) => {
-        setRoomdetails({ roomid })
-        // setopenroom(false)
-        setisuserinroom(true)
-        setisusercreator(false)
-        newSocket.emit("room-join", { roomid })
-        setvideodisplay(!videodisplay)
-
+        const successcallback=()=>{
+            
+            setRoomdetails({ roomid })
+            // setopenroom(false)
+            setisuserinroom(true)
+            setisusercreator(false)
+            newSocket.emit("room-join", { roomid })
+            setvideodisplay(!videodisplay)
+        }
+getlocalstreampreview(audioonly,successcallback)
 
     }
     const leaveroom = () => {
         const roomid = Roomdetails.roomid
+        if(localstream){
+            localstream.getTracks().forEach((track:any)=>{
+                track.stop();
+                
+            })
+            setlocalstream(null);
+        }
         newSocket.emit("leave-room", { roomid })
         // setopenroom(false)
         setisuserinroom(false);
@@ -129,6 +139,8 @@ export default function Page() {
                 })}
                 <div className={`${x}`}>
                     <Webrtc />
+                    {audioonly ? "enabled audio":"audio disabled"}
+                    <button onClick={()=>{setaudioonly(!audioonly)}}></button>
                 </div>
             </div >
         </>

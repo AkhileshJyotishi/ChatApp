@@ -11,14 +11,17 @@ const Video: React.FC<VideoProps> = ({ stream, isLocalStream }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
 console.log("stream  ",stream)
     useEffect(() => {
+        console.log("videoref.current first checker   ",videoRef.current)
         if (videoRef.current && stream) {
             videoRef.current.srcObject = stream;
-console.log(videoRef.current ,videoRef.current.onloadedmetadata )
-            videoRef.current.onloadedmetadata = () => {
-console.log("stream  ",stream)
-                videoRef.current!.play();
+        console.log("videoref.current.srcobject first checker   ",videoRef.current.srcObject)
 
-            }
+        videoRef.current.onloadedmetadata = () => {
+            console.log("videoref.current is  ",videoRef.current)
+            videoRef.current?.play();
+            
+        }
+        console.log(videoRef.current ,videoRef.current.onloadedmetadata )
 
         }
     }, [stream]);

@@ -10,3 +10,14 @@ ICE candidate = information about internet connectoion , typically user send its
 Session description protocol===
                                 format to describe multimedia communication sessions for purposes of session announcement and 
                                 session invitation ,, it contain timing information of audio and video and their codecs
+
+
+
+
+                                -------------MESH =multiple direct connections
+                                =------------mcu = multipoint control units
+                                -------------sfu= selective forwarding units 
+                                
+
+                                limitations with mesh == it works with less no of users and it also work less efficiently for low spec users 
+                                if there are x user then x^x connections are there
