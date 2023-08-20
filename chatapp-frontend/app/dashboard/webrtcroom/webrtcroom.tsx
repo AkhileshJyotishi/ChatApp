@@ -13,12 +13,13 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare';
-
 import axios from 'axios';
 import { trace } from 'console';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
+import Video from './video';
+// import { socketsContext } from "@/contexts/socketcontext";
 
 const fullscreenroomstyle = {
     width: "100%",
@@ -32,6 +33,58 @@ const minimizedroomstyle = {
 }
 
 export default function Webrtc() {
+
+
+
+    const {
+        friends2,
+        setfriends,
+        pendingfriendinvitations,
+        setpendingfriendinvitations,
+        onlineusers,
+        setonlineusers,
+        targetmailaddress,
+        settargetmailaddress,
+        Connectwithsocketserver,
+        newSocket,
+        setNewSocket,
+        isuserinroom,
+        setisuserinroom,
+        isusercreator,
+        setisusercreator,
+        Roomdetails,
+        setRoomdetails,
+        activerooms,
+        setactiverooms,
+        localstream,
+        setlocalstream,
+        remotestreams,
+        setremotestreams,
+        audioonly,
+        setaudioonly,
+        screensharingstream,
+        setscreensharingstream,
+        isscreensharingactive,
+        setisscreensharingactive,
+        openroom,
+        setopenroom,
+        videodisplay,
+        setvideodisplay,
+    } = useContext(socketsContext);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const [micActive, setMicActive] = useState(false);
     const [cameraActive, setCameraActive] = useState(false);
@@ -72,18 +125,29 @@ export default function Webrtc() {
         };
     }, []);
 
+    const Videocontainer = () => {
+        return (
+            <>
+                <div style={{ height: "85%", width: "100%", display: "flex", flexWrap: "wrap" }}>
 
+                    <Video stream={localstream} isLocalStream={false} />
+                </div>
+
+            </>
+        )
+
+    }
     return (
         <>
             <div className='flex flex-col rounded-xl bg-[#202225]' style={isroominimized ? minimizedroomstyle : fullscreenroomstyle}>
                 <div className='flex-grow'>
-
+                    <Videocontainer />
                 </div>
-                <div className='flex justify-between items-center gap-1 mx-4' style={isroominimized ? {marginBottom:"8px"}:{marginBlock:"20px"}}>
+                <div className='flex items-center justify-between gap-1 mx-4' style={isroominimized ? { marginBottom: "8px" } : { marginBlock: "20px" }}>
                     <div>
-                        <p className='text-white font-semibold cursor-default' style={isroominimized ? {fontSize:"small"}:{fontSize:"medium"}}>{currentTime}</p>
+                        <p className='font-semibold text-white cursor-default' style={isroominimized ? { fontSize: "small" } : { fontSize: "medium" }}>{currentTime}</p>
                     </div>
-                    <div className='flex justify-between items-center gap-3'>
+                    <div className='flex items-center justify-between gap-3'>
                         <div onClick={() => { setScreenSharing(prev => !prev) }}>
                             {screenSharing ?
                                 <IconButton style={{ color: 'white', backgroundColor: "#3c4043" }}>

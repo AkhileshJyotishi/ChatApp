@@ -55,18 +55,35 @@ export default function SocketContextProvider({ children }) {
         setopenroom(true);
         setisusercreator(true);
         setisuserinroom(true);
+        //   (property) roomdetails: {
+        //     roomcreator: {
+        //         userid: any;
+        //         socketid: any;
+        //     };
+        //     participants: {
+        //         userid: any;
+        //         socketid: any;
+        //     }[];
+        //     roomid: string;
+        // }
+        let rooms = [...activerooms];
+
+        rooms.push(data);
+        console.log("new room added to our own array", rooms);
+        setactiverooms(rooms);
       });
       socket.on("active-rooms", (data) => {
+        console.log(data)
         // setactiverooms(data)
         const { activerooms } = data;
         let rooms = [];
-        console.log("friends2  ",friends2)
+        console.log("friends2  ", friends2);
         activerooms.forEach((room) => {
           // console.log("active room wla roo m    " ,room)
           friends2.forEach((element) => {
             // console.log(element,  "  the rooms are  " ,room)
             if (element.id === room.roomcreator.userid) {
-              console.log("printing" ,element.id, room.roomcreator.userid)
+              console.log("printing", element.id, room.roomcreator.userid);
               rooms.push({ ...room, creatorusername: element.username });
             }
             // console.log(element)
@@ -76,7 +93,6 @@ export default function SocketContextProvider({ children }) {
         // console.log(rooms)
         setactiverooms(rooms);
       });
-
     }
   }
 
@@ -98,6 +114,10 @@ export default function SocketContextProvider({ children }) {
   const [screensharingstream, setscreensharingstream] = useState(null);
   const [isscreensharingactive, setisscreensharingactive] = useState(false);
   const [openroom, setopenroom] = useState(false);
+  const [videodisplay, setvideodisplay] = useState(false);
+
+  //streaming states
+  const [stream, setstream] = useState();
 
   return (
     <socketsContext.Provider
@@ -134,6 +154,10 @@ export default function SocketContextProvider({ children }) {
         setisscreensharingactive,
         openroom,
         setopenroom,
+        videodisplay,
+        setvideodisplay,
+        stream,
+        setstream,
       }}
     >
       {children}
