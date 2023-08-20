@@ -29,27 +29,23 @@ const CssTextField = styled(TextField)({
     },
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
-            borderColor: 'red',
             borderWidth: '0',
         },
         '&:hover fieldset': {
-            borderColor: 'red',
             borderWidth: '0',
         },
         '&.Mui-focused fieldset': {
-            borderColor: 'red',
             borderWidth: '0',
         },
     },
     '& .MuiInputBase-root': {
-        margin: '-1px 13px', // Set margin to 0
+        margin: '8px', // Set margin to 0
         padding: '0',
 
     },
     '& .MuiInputBase-input': {
         fontSize: '16px',
-        color: '#4b5563',
-        lineHeight: '1.5rem',
+        color: 'white',
     },
 });
 import Webrtc from '../webrtcroom/webrtcroom';
@@ -326,7 +322,7 @@ export default function Page() {
                             <div className='flex items-center gap-4'>
                                 <div className='relative'>
                                     <div>
-                                        <IconButton style={{color:"white"}} onClick={()=>{
+                                        <IconButton style={{ color: "white" }} onClick={() => {
                                             document.getElementById("notification")?.classList.toggle("hidden");
                                         }}>
                                             <NotificationsActiveIcon />
@@ -487,11 +483,11 @@ export default function Page() {
                             </div>
                             <div >
                                 <div className='flex mb-5 mt-2 gap-1 rounded px-2 mx-2 items-center justify-between bg-[#343434] border-b border-[#d7d7d7]'>
-                                    <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Send invitation" 
-                                    value={targetmailaddress}
-                                    onChange={(e:any)=>{
-                                        settargetmailaddress(e.target.value);
-                                    }} />
+                                    <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Send invitation"
+                                        value={targetmailaddress}
+                                        onChange={(e: any) => {
+                                            settargetmailaddress(e.target.value);
+                                        }} />
                                     <IconButton style={{ fontSize: "small", color: "white" }} onClick={() => {
                                         if (targetmailaddress.length > 0) {
                                             sendfriendinvitation({
@@ -588,7 +584,11 @@ export default function Page() {
                                                     }} />
                                                 </motion.div>
                                             </div>
-                                            <input type="text" id='sendMessageInput' className='flex-grow text-sm text-white bg-[#272727] border-none rounded outline-none' placeholder='Type a message' value={message} onChange={(e) => {
+                                            {/* <input type="text" id='sendMessageInput' className='flex-grow text-sm text-white bg-[#272727] border-none rounded outline-none' placeholder='Type a message' 
+                                            
+                                            value={message} 
+                                            
+                                            onChange={(e) => {
                                                 setmessage(e.target.value)
                                             }}
 
@@ -598,25 +598,40 @@ export default function Page() {
                                                     }
                                                 }}
 
-                                            />
-                                            {/* <div className='flex-grow h-full bg-red-200'>
+                                            /> */}
+                                            <div className='flex-grow h-full'>
                                                 <Box
                                                     component="form"
                                                     noValidate
                                                     sx={{
-                                                        '& .MuiTextField-root': { ml: -1.5, width: 'fullWidth',height:"full" },
+                                                        '& .MuiTextField-root': { width: 'fullWidth', height: "full" },
                                                     }}
                                                 >
-                                                    <CssTextField
-                                                        label=""
-                                                        id="custom-css-outlined-input"
-                                                        multiline
-                                                        fullWidth
-                                                        autoFocus
-                                                        spellCheck="false"
-                                                    />
+
+                                                    <div>
+                                                        <CssTextField
+                                                            id="outlined-multiline-flexible"
+                                                            multiline
+                                                            fullWidth
+                                                            autoFocus
+                                                            spellCheck="false"
+                                                            maxRows={4}
+                                                            value={message}
+
+                                                            onChange={(e) => {
+                                                                setmessage(e.target.value)
+                                                            }}
+
+                                                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                                                if (e.key === "Enter" && !e.shiftKey) {
+                                                                    e.preventDefault();
+                                                                    handlesendmessage();
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </Box>
-                                            </div> */}
+                                            </div>
                                             <button onClick={() => { handlesendmessage() }}>
                                                 <IconButton style={{ color: "white", fontSize: "large" }}>
                                                     <SendIcon />
