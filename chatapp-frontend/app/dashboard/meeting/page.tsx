@@ -5,6 +5,7 @@ import { AuthContext } from '@/contexts/authContext';
 import { socketsContext } from '@/contexts/socketcontext';
 import Webrtc from '../webrtcroom/webrtcroom';
 import * as webrtchandler from '../webrtcroom/webrtchandle';
+import Peer from 'simple-peer'
 
 export default function Page() {
 
@@ -82,8 +83,8 @@ export default function Page() {
 
     }
     const joinroom = (roomid: any) => {
-        const successcallback=()=>{
-            
+        const successcallback = () => {
+
             setRoomdetails({ roomid })
             // setopenroom(false)
             setisuserinroom(true)
@@ -91,15 +92,15 @@ export default function Page() {
             newSocket.emit("room-join", { roomid })
             setvideodisplay(!videodisplay)
         }
-getlocalstreampreview(audioonly,successcallback)
+        getlocalstreampreview(audioonly, successcallback)
 
     }
     const leaveroom = () => {
         const roomid = Roomdetails.roomid
-        if(localstream){
-            localstream.getTracks().forEach((track:any)=>{
+        if (localstream) {
+            localstream.getTracks().forEach((track: any) => {
                 track.stop();
-                
+
             })
             setlocalstream(null);
         }
@@ -108,6 +109,61 @@ getlocalstreampreview(audioonly,successcallback)
         setisuserinroom(false);
 
     }
+    // let peers: any = {};
+    // const getconfiguration = ():custompeerconfig => {
+    //     const turnIceServers = null;
+    //     if (turnIceServers) {
+    //         //we need turn server for this 
+    //     }
+    //     else {
+    //         console.warn("using only turn servers")
+    //         return {
+    //             iceservers: [
+    //                 {
+    //                     url: 'stun:stun.l.google.com:19302'
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // }
+    interface custompeerconfig{
+        iceservers:{
+            url:string;
+        }
+    }[];
+
+    // const preparenewpeerconnection = (connusersocketid: any, isinitiator: any) => {
+    //     if (isinitiator) {
+    //         console.log("preparing new peer connection as inititator")
+    //     }
+    //     else {
+    //         console.log("preparing room connection as initiator")
+    //     }
+    //     const peerconfig=getconfiguration()
+    //     peers[connusersocketid] = new Peer({
+    //         initiator: isinitiator,
+    //         config: peerconfig,
+    //         stream: localstream
+    //     });
+    //     peers[connusersocketid].on('signal', (data: any) => {
+    //          const signaldata={
+    //             signal:data,
+    //            connUserSocketId :connusersocketid,
+                
+    //          }
+    //         //  signalpeerdata(signaldata);
+    //     })
+
+
+    // }
+    // newSocket.on('conn-prepare', (data: any) => {
+    //     console.log("prepare for connections")
+    //     console.log(data)
+
+    //     const { connusersocketid } = data;
+    //     preparenewpeerconnection(data, false)
+
+    // })
 
     let x = videodisplay ? 'block' : 'none';
 
@@ -139,8 +195,8 @@ getlocalstreampreview(audioonly,successcallback)
                 })}
                 <div className={`${x}`}>
                     <Webrtc />
-                    {audioonly ? "enabled audio":"audio disabled"}
-                    <button onClick={()=>{setaudioonly(!audioonly)}}></button>
+                    {audioonly ? "enabled audio" : "audio disabled"}
+                    <button onClick={() => { setaudioonly(!audioonly) }}></button>
                 </div>
             </div >
         </>
