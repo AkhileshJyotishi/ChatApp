@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emailjs/browser": "^3.10.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.1",
@@ -16,6 +17,9 @@
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
     "@mui/styled-engine-sc": "^5.12.0",
+    "@react-three/drei": "^9.56.28",
+    "@react-three/fiber": "^8.11.5",
+    "@react-three/postprocessing": "^2.7.0",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
@@ -29,12 +33,14 @@
     "framer-motion": "^10.16.0",
     "next": "13.4.16",
     "postcss": "8.4.27",
+    "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-cookie": "^5.0.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-simple-maps": "^3.0.0",
     "socket.io-client": "^4.7.2",
-    "tailwindcss": "^3.3.3",
-    "typescript": "5.1.6"
+    "styled-components": "^6.0.7",
+    "three": "^0.150.1"
   }
 }
