@@ -8,7 +8,7 @@ const {
   removeconnecteduser,
   setsocketserverinstance,
   getonlineusers,
-  getactiveconnections,roomcreationhandle
+  getactiveconnections,roomcreationhandle,activerooms,updaterooms,joinactiveroom
 } = require("./socketstore");
 
 // console.log(authsocket);
@@ -108,7 +108,22 @@ const registersocketserver = (server) => {
     socket.on("room-create",(data)=>{
      roomcreationhandle(socket)
           })
+socket.on("room-join",(data)=>{
+    const {roomid}=data;
+    const participationdetails={
+      userid:socket.user.userid,
+      socketid:socket.id
+    }
+    const activeroom=activerooms.find((activeroom)=>{activeroom.roomid===roomid})
+    // const roomdetails=activerooms
+  // {...activeroom}
+  joinactiveroom(roomid,participationdetails)
 
+  updaterooms()
+
+
+
+})
 
 
 

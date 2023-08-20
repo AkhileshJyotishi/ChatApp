@@ -44,6 +44,7 @@ const CssTextField = styled(TextField)({
     },
 });
 import Webrtc from '../webrtcroom/webrtcroom';
+import Link from 'next/link';
 
 export default function Page() {
     // const friends = [
@@ -75,7 +76,7 @@ export default function Page() {
 
 
     const { auth, setAuth } = useContext(AuthContext);
-    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress,Connectwithsocketserver,newSocket,setNewSocket,messagesArray } = useContext(socketsContext);
+    const { friends2, setfriends, pendingfriendinvitations, setpendingfriendinvitations, onlineusers, setonlineusers, targetmailaddress, settargetmailaddress, Connectwithsocketserver, newSocket, setNewSocket, messagesArray } = useContext(socketsContext);
     const [activeFriend, setActiveFriend] = useState<any>(null);
     const router = useRouter();
     const [chattype, setchattype] = useState<any>("");
@@ -204,6 +205,7 @@ export default function Page() {
     }
 
 
+
     // const createnewroom = () => {
     //     console.log("new room being created frontendJ")
     //     newSocket.emit("room-create")
@@ -212,8 +214,8 @@ export default function Page() {
     // const newroomcreated = (data: any) => {
     //     const { roomdetails } = data;
     //     setRoomdetails(roomdetails);
-        
-        
+
+
     // }
     const handlesendmessage = () => {
         console.log("sending message to the server")
@@ -442,6 +444,9 @@ export default function Page() {
                                         })
                                     }}>send invitation</button>
                                 </div>
+                                <div>
+                                    <Link href={"meeting"}>to meeting</Link>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -474,7 +479,7 @@ export default function Page() {
                                         {/* Chat */}
                                         <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
                                             {
-                                                messagesArray.length != 0 && messagesArray.map((message:any, key:any) => {
+                                                messagesArray.length != 0 && messagesArray.map((message: any, key: any) => {
                                                     return (
                                                         <div key={key} className={`${message.authorId._id === activeFriend.id ? 'text-left' : 'text-right'} m-3`}>
                                                             <span className={`${message.authorId._id !== activeFriend.id ? 'bg-green-300' : 'bg-gray-200'} p-3`}>{message.content}</span>
