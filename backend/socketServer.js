@@ -118,9 +118,7 @@ const registersocketserver = (server) => {
         userid: socket.user.userid,
         socketid: socket.id,
       };
-      socket.on("leave-room", (data) => {
-        leaveroomhandle(socket, data);
-      });
+      
 
       const activeroom = activerooms.find((activeroom) => {
         activeroom.roomid === roomid;
@@ -128,8 +126,18 @@ const registersocketserver = (server) => {
       // const roomdetails=activerooms
       // {...activeroom}
       joinactiveroom(roomid, participationdetails);
+activerooms.participants.forEach((participant)=>{
+  if(participant.socketid !==participationdetails.socketid){
+  socket.to(participant.socketid).emit('conn-prepare',{
+    connusersocketid:participationdetails.socketid
+  })
 
+}
+})
       updaterooms();
+    });
+    socket.on("leave-room", (data) => {
+      leaveroomhandle(socket, data);
     });
 
     socket.on("disconnect", () => {

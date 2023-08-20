@@ -5,6 +5,7 @@ import { AuthContext } from '@/contexts/authContext';
 import { socketsContext } from '@/contexts/socketcontext';
 import Webrtc from '../webrtcroom/webrtcroom';
 import * as webrtchandler from '../webrtcroom/webrtchandle';
+import Peer from 'simple-peer'
 
 export default function Page() {
 
@@ -37,13 +38,13 @@ export default function Page() {
     };
     const defaultconstraints = {
         audio: true,
-        video: false,
+        video: true,
         // we can also use video:{
         // width:
         // height:
         // }
     };
-    const getlocalstreampreview = (onlyaudio = false, callback: any) => {
+    const getlocalstreampreview = (onlyaudio = audioonly, callback: any) => {
         const constraints = onlyaudio ? onlyaudioconstraints : defaultconstraints;
         navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
             console.log("localstreampreview func ke andar   ", stream)
@@ -71,7 +72,7 @@ export default function Page() {
             newSocket.emit("room-create")
             console.log("emmitor worminb")
         }
-        getlocalstreampreview(false, successcallback)
+        getlocalstreampreview(audioonly, successcallback)
 
     }
     //this function is for the room created by us
@@ -82,22 +83,87 @@ export default function Page() {
 
     }
     const joinroom = (roomid: any) => {
-        setRoomdetails({ roomid })
-        // setopenroom(false)
-        setisuserinroom(true)
-        setisusercreator(false)
-        newSocket.emit("room-join", { roomid })
-        setvideodisplay(!videodisplay)
+        const successcallback = () => {
 
+            setRoomdetails({ roomid })
+            // setopenroom(false)
+            setisuserinroom(true)
+            setisusercreator(false)
+            newSocket.emit("room-join", { roomid })
+            setvideodisplay(!videodisplay)
+        }
+        getlocalstreampreview(audioonly, successcallback)
 
     }
     const leaveroom = () => {
         const roomid = Roomdetails.roomid
+        if (localstream) {
+            localstream.getTracks().forEach((track: any) => {
+                track.stop();
+
+            })
+            setlocalstream(null);
+        }
         newSocket.emit("leave-room", { roomid })
         // setopenroom(false)
         setisuserinroom(false);
 
     }
+    // let peers: any = {};
+    // const getconfiguration = ():custompeerconfig => {
+    //     const turnIceServers = null;
+    //     if (turnIceServers) {
+    //         //we need turn server for this 
+    //     }
+    //     else {
+    //         console.warn("using only turn servers")
+    //         return {
+    //             iceservers: [
+    //                 {
+    //                     url: 'stun:stun.l.google.com:19302'
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // }
+    interface custompeerconfig{
+        iceservers:{
+            url:string;
+        }
+    }[];
+
+    // const preparenewpeerconnection = (connusersocketid: any, isinitiator: any) => {
+    //     if (isinitiator) {
+    //         console.log("preparing new peer connection as inititator")
+    //     }
+    //     else {
+    //         console.log("preparing room connection as initiator")
+    //     }
+    //     const peerconfig=getconfiguration()
+    //     peers[connusersocketid] = new Peer({
+    //         initiator: isinitiator,
+    //         config: peerconfig,
+    //         stream: localstream
+    //     });
+    //     peers[connusersocketid].on('signal', (data: any) => {
+    //          const signaldata={
+    //             signal:data,
+    //            connUserSocketId :connusersocketid,
+                
+    //          }
+    //         //  signalpeerdata(signaldata);
+    //     })
+
+
+    // }
+    // newSocket.on('conn-prepare', (data: any) => {
+    //     console.log("prepare for connections")
+    //     console.log(data)
+
+    //     const { connusersocketid } = data;
+    //     preparenewpeerconnection(data, false)
+
+    // })
 
     let x = videodisplay ? 'block' : 'none';
 
@@ -129,6 +195,8 @@ export default function Page() {
                 })}
                 <div className={`${x}`}>
                     <Webrtc />
+                    {audioonly ? "enabled audio" : "audio disabled"}
+                    <button onClick={() => { setaudioonly(!audioonly) }}></button>
                 </div>
             </div >
         </>

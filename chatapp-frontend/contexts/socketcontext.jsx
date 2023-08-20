@@ -95,7 +95,7 @@ export default function SocketContextProvider({ children }) {
       });
     }
   }
-
+const [peers,setpeers]=useState();
   const [friends2, setfriends] = useState([]);
   const [pendingfriendinvitations, setpendingfriendinvitations] = useState([]);
   const [onlineusers, setonlineusers] = useState([]);
