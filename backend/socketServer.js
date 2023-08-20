@@ -8,7 +8,13 @@ const {
   removeconnecteduser,
   setsocketserverinstance,
   getonlineusers,
-  getactiveconnections,roomcreationhandle
+  disconnecthandler,
+  getactiveconnections,
+  roomcreationhandle,
+  activerooms,
+  updaterooms,
+  joinactiveroom,
+  leaveroomhandle,
 } = require("./socketstore");
 
 // console.log(authsocket);
@@ -24,11 +30,12 @@ const newconnectionhandle = async (socket, io) => {
 
   updatefriendspendinginvitations(userhandler.data._id);
   updatefriends(userhandler.data._id);
+  setTimeout(() => {
+    
+    updaterooms(socket.id)
+  },500);
 };
 
-const disconnecthandler = (socket) => {
-  removeconnecteduser(socket.id);
-};
 const messagemodel = require("./models/messagemodel");
 const conversationmodel = require("./models/conversationmodel");
 
@@ -51,13 +58,13 @@ const directmessagehandler = async (socket, data) => {
     if (conversation) {
       conversation.messages.push(message._id);
       await conversation.save();
-      updateChatHistory(conversation._id.toString())
+      updateChatHistory(conversation._id.toString());
     } else {
       const newconversation = await conversationmodel.create({
         messages: [message._id],
         participants: [userId, recieveuserid],
       });
-      updateChatHistory(conversation._id.toString())
+      updateChatHistory(newconversation._id.toString());
     }
   } catch (err) {
     console.log(err);
@@ -67,7 +74,6 @@ const directmessagehandler = async (socket, data) => {
     });
   }
 };
-
 
 const registersocketserver = (server) => {
   // console.log("server connection ho rha h");
@@ -90,28 +96,41 @@ const registersocketserver = (server) => {
     socket.on("direct-message", (data) => {
       directmessagehandler(socket, data);
     });
-    socket.on("direct-chat-history",async(data)=>{
+    socket.on("direct-chat-history", async (data) => {
       const userId = socket.user.data._id;
       const { recieveuserid } = data;
       const conversation = await conversationmodel.findOne({
-        participants: { $all: [userId, recieveuserid] }
+        participants: { $all: [userId, recieveuserid] },
       });
 
-
-
-      console.log("direct chat histort specifiacally called ",conversation);
-      if(conversation){
-        updateChatHistory(conversation._id.toString(),socket.id)
+      console.log("direct chat histort specifiacally called ", conversation);
+      if (conversation) {
+        updateChatHistory(conversation._id.toString(), socket.id);
       }
-    })
+    });
 
-    socket.on("room-create",(data)=>{
-     roomcreationhandle(socket)
-          })
+    socket.on("room-create", (data) => {
+      roomcreationhandle(socket, data);
+    });
+    socket.on("room-join", (data) => {
+      const { roomid } = data;
+      const participationdetails = {
+        userid: socket.user.userid,
+        socketid: socket.id,
+      };
+      socket.on("leave-room", (data) => {
+        leaveroomhandle(socket, data);
+      });
 
+      const activeroom = activerooms.find((activeroom) => {
+        activeroom.roomid === roomid;
+      });
+      // const roomdetails=activerooms
+      // {...activeroom}
+      joinactiveroom(roomid, participationdetails);
 
-
-
+      updaterooms();
+    });
 
     socket.on("disconnect", () => {
       console.log("disconnected");
@@ -125,35 +144,37 @@ const emitonlineusers = () => {
 };
 
 const updateChatHistory = async (conversationId, toSpcificSocketId = null) => {
-  const conversation = await conversationmodel.findById(conversationId).populate({
-    path: 'messages',
-    model: 'message',
-    populate: {
-      path: "authorId",
-      model: "user",
-      select: "username _id"
-    }
-  })
+  const conversation = await conversationmodel
+    .findById(conversationId)
+    .populate({
+      path: "messages",
+      model: "message",
+      populate: {
+        path: "authorId",
+        model: "user",
+        select: "username _id",
+      },
+    });
   if (conversation) {
-    console.log("conversation2",conversation)
+    console.log("conversation2", conversation);
     if (toSpcificSocketId) {
-      console.log("to specific socket id ",toSpcificSocketId);
+      console.log("to specific socket id ", toSpcificSocketId);
       return io.to(toSpcificSocketId).emit("direct-chat-history", {
         messages: conversation.messages,
-        participants: conversation.participants
-      })
+        participants: conversation.participants,
+      });
     }
-    conversation.participants.forEach(userId => {
+    conversation.participants.forEach((userId) => {
       const activeConnection = getactiveconnections(userId.toString());
       activeConnection.forEach((socketid) => {
         io.to(socketid).emit("direct-chat-history", {
           messages: conversation.messages,
-          participants: conversation.participants
-        })
-      })
-    })
+          participants: conversation.participants,
+        });
+      });
+    });
   }
-}
+};
 
 setInterval(() => {
   // getonlineusers();

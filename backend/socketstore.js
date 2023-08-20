@@ -1,7 +1,6 @@
-const {v4:uuidv4}=require('uuid')
-const roomsupdates=require('./sockets/rooms')
+const { v4: uuidv4 } = require("uuid");
 const connectedusers = new Map();
-let activerooms=[];
+let activerooms = [];
 let io = null;
 const setsocketserverinstance = (ioinstance) => {
   // console.log("setsocketserverinstance working " , ioinstance);
@@ -39,45 +38,97 @@ const getactiveconnections = (userid) => {
 
 const getonlineusers = () => {
   const onlineUsers = [];
-  connectedusers.forEach((value,key) => {
+  connectedusers.forEach((value, key) => {
     onlineUsers.push({ socketid: key, userid: value.userid });
     return onlineUsers;
   });
 };
 
-const roomcreationhandle=(socket)=>{
-  console.log("room is breing created")
-  const socketid=socket.id;
-    const userid = socket.user.data._id;
+const roomcreationhandle = (socket, data) => {
+  console.log("room is breing created");
+  const socketid = socket.id;
+  const userid = socket.user.data._id;
 
-    const roomdetails=addnewactiveroom(userid,socketid)
-socket.emit("room-create",{
-roomdetails
-})  
-roomsupdates.updaterooms();
+  const roomdetails = addnewactiveroom(userid, socketid);
+  socket.emit("room-create", {
+    roomdetails,
+  });
+  updaterooms();
+};
 
-}
-
-const addnewactiveroom=(userid,socketid)=>{
-  const newactiveroom={
-    roomcreator:{
+const addnewactiveroom = (userid, socketid) => {
+  const newactiveroom = {
+    roomcreator: {
       userid,
-      socketid
+      socketid,
     },
-    participants:[
+    participants: [
       {
         userid,
-        socketid
-      }
+        socketid,
+      },
     ],
-    roomid:uuidv4()
-  }
-  activerooms.push(newactiveroom)
-  console.log(activerooms)  
+    roomid: uuidv4(),
+  };
+  activerooms.push(newactiveroom);
+  console.log(activerooms);
   return newactiveroom;
+};
 
-}
+const updaterooms = (tospecificid = null) => {
+  const io = getsocketserverinstance();
+  // const activeRooms=activerooms;
+  if (tospecificid && activerooms.length>0) {
+    console.log("isike karan eroor a a rhaa h ", activerooms);
+    io.to(tospecificid).emit("active-rooms"),
+      {
+        activerooms,
+      };
+  } else {
+    console.log("active rooms emitted");
+    io.emit("active-rooms", {
+      activerooms,
+    });
+  }
+};
+const joinactiveroom = (roomid, newparticipant) => {
+  const rooms = activerooms.find((room) => room.roomid === roomid);
+  activerooms = activerooms.filter((room) => room.roomid !== roomid);
+  const updatedroom = {
+    ...rooms,
+    participants: [...rooms.participants, newparticipant],
+  };
+  activerooms.push(updatedroom);
+  console.log(activerooms);
+};
+const leaveroomhandle = (socket, data) => {
+  const activeroom = activerooms.find((room) => room.roomid === data.roomid);
+  if (activeroom) {
+    // data.roomid,socket.id,
+    let copyofactiverooms = { ...activeroom };
+    copyofactiverooms.participants = copyofactiverooms.participants.filter(
+      (participant) => participant.socketid !== socket.id
+    );
 
+    activerooms = activerooms.filter((room) => room.roomid !== data.roomid);
+    if (copyofactiverooms.participants.length > 0) {
+      activerooms.push(copyofactiverooms);
+    }
+    updaterooms();
+  }
+};
+const disconnecthandler = (socket) => {
+  activerooms.forEach((activeroom) => {
+    const userinroom = activeroom.participants.some(
+      (participant) => participant.socketid == socket.id
+    );
+    if (userinroom) {
+      leaveroomhandle(socket, { roomid: activeroom.roomid });
+    }
+  });
+
+  removeconnecteduser(socket.id);
+};
 module.exports = {
   addnewconnecteduser,
   removeconnecteduser,
@@ -87,5 +138,9 @@ module.exports = {
   getonlineusers,
   addnewactiveroom,
   roomcreationhandle,
-  activerooms
+  activerooms,
+  updaterooms,
+  joinactiveroom,
+  leaveroomhandle,
+  disconnecthandler,
 };

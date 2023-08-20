@@ -4,21 +4,12 @@ import { socketsContext } from '@/contexts/socketcontext';
 import axios from 'axios';
 import { trace } from 'console';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import io from "socket.io-client";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { alpha, styled } from '@mui/material/styles';
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import SendIcon from '@mui/icons-material/Send';
-import { motion } from 'framer-motion';
-import CallIcon from '@mui/icons-material/Call';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import PersonIcon from '@mui/icons-material/Person';
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+
 const CssTextField = styled(TextField)({
 
     '& label.Mui-focused': {
@@ -53,7 +44,7 @@ const CssTextField = styled(TextField)({
     },
 });
 import Webrtc from '../webrtcroom/webrtcroom';
-import { IconButton } from '@mui/material';
+import Link from 'next/link';
 
 export default function Page() {
     // const friends = [
@@ -92,7 +83,6 @@ export default function Page() {
     const [chatactions, setchatactions] = useState<any>("");
     const [messages, setmessages] = useState<any[]>([]);
     const [message, setmessage] = useState<any>("");
-    const [isOpenEmojiPicker, setIsOpenEmojiPicker] = useState<boolean>(false);
 
     // window.friend = activeFriend;
     // window.autth = auth;
@@ -116,7 +106,6 @@ export default function Page() {
             )
             console.log("invitation bhij gya")
             console.log(friendinvitation)
-            settargetmailaddress("");
         }
         catch (err) {
 
@@ -216,6 +205,7 @@ export default function Page() {
     }
 
 
+
     // const createnewroom = () => {
     //     console.log("new room being created frontendJ")
     //     newSocket.emit("room-create")
@@ -229,6 +219,7 @@ export default function Page() {
     // }
     const handlesendmessage = () => {
         console.log("sending message to the server")
+
         // setmessages()
         // setmessage("");
         if (message.length > 0) {
@@ -237,52 +228,18 @@ export default function Page() {
                 // recieveuserId:
                 content: message,
                 recieveuserid: activeFriend.id
+
             })
-            setmessage("");
         }
 
     }
-
-    const emojiPickerRef = useRef<HTMLDivElement | null>(null);
-    useEffect(() => {
-        // Function to handle clicks outside the emoji picker
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
-                setIsOpenEmojiPicker(false);
-            }
-        };
-
-        // Add event listener when the emoji picker is open
-        if (isOpenEmojiPicker) {
-            document.addEventListener('mousedown', handleOutsideClick);
-        }
-
-        // Remove event listener on unmount and when the picker is closed
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        };
-    }, [isOpenEmojiPicker]);
-
-    const chatContainerRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        // Scroll to the bottom of the chat when new messages are added
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTo({
-                top: chatContainerRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }
-    }, [messagesArray]);
-
-    // window.friend = friends2;
 
 
 
     return (
         <>
             {auth && <div className='flex flex-col w-screen h-screen'>
-                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-[#272727] dark:border-gray-700">
+                <nav className="z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
                     <div className="px-3 py-3 lg:px-5 lg:pl-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center justify-start">
@@ -325,16 +282,11 @@ export default function Page() {
                             <div className='flex items-center gap-4'>
                                 <div className='relative'>
                                     <div>
-                                        <IconButton style={{color:"white"}} onClick={()=>{
-                                            document.getElementById("notification")?.classList.toggle("hidden");
-                                        }}>
-                                            <NotificationsActiveIcon />
-                                        </IconButton>
-                                        {/* <img src="/notificationBell.svg" alt="" width={20} height={20}
+                                        <img src="/notificationBell.svg" alt="" width={20} height={20}
                                             onClick={() => {
                                                 document.getElementById("notification")?.classList.toggle("hidden");
                                             }}
-                                        /> */}
+                                        />
                                     </div>
                                     {pendingfriendinvitations.length > 0 && <div className='absolute -top-1 -right-1 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
                                         {pendingfriendinvitations.length}
@@ -463,146 +415,84 @@ export default function Page() {
                 </nav>
                 <div className='bg-yellow-50 flex-grow flex h-[calc(100vh-56px)] overflow-y-auto'>
                     {/* FriendList */}
-                    <div className='h-full w-[20%] text-black bg-[#272727]'>
-                        <div className='flex flex-col h-full'>
-                            <div className='flex mt-5 mb-2 gap-1 rounded px-2 py-2 mx-2 items-center justify-between bg-[#343434] border-b border-[#d7d7d7]'>
-                                <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Search for friends" />
-                                <SearchIcon style={{ fontSize: "small", color: "white" }} />
-                            </div>
-                            <div className='flex-grow overflow-y-auto border-t-gray-300 p-2'>
+                    <div className='h-full w-[25%] text-black'>
+                        <div className='flex flex-col h-full bg-teal-50'>
+                            <input type="text" className='w-full border-none' placeholder="Search for friends" />
+                            <div className='flex-grow overflow-y-auto bg-red-100 border-t border-t-gray-300'>
                                 {
                                     friends2 && friends2.map((friend: any, key: number) => {
                                         return (
-                                            <div key={key} className='p-2 my-1 flex gap-3 items-center cursor-pointer hover:bg-[#404040] text-white rounded'
+                                            <div key={key} className='p-3 bg-white border-b cursor-pointer border-b-gray-300 hover:bg-gray-50'
                                                 onClick={() => {
                                                     setActiveFriend(friend);
+
                                                 }}
-                                                style={activeFriend?.id == friend.id ? { backgroundColor: "#404040" } : {}}
                                             >
-                                                <div className='w-10 flex items-center justify-center h-10 overflow-hidden rounded-full bg-[#444]'>
-                                                    {friend.profile ? <img src={friend?.profile} alt="" className='rounded-full' /> : <PersonIcon style={{ color: "#7d7d7d" }} />}
-                                                </div>
-                                                <div className='text-xs font-bold'>{friend.username}</div>
+                                                <h2>{friend.username}</h2>
                                             </div>
                                         )
                                     })
                                 }
-                            </div>
-                            <div >
-                                <div className='flex mb-5 mt-2 gap-1 rounded px-2 mx-2 items-center justify-between bg-[#343434] border-b border-[#d7d7d7]'>
-                                    <input type="text" className='w-full text-[#d7d7d7] border-none outline-none bg-transparent text-xs' placeholder="Send invitation" 
-                                    value={targetmailaddress}
-                                    onChange={(e:any)=>{
-                                        settargetmailaddress(e.target.value);
+                                <div >
+                                    <input type="text" onChange={(e) => {
+                                        settargetmailaddress(e.target.value)
                                     }} />
-                                    <IconButton style={{ fontSize: "small", color: "white" }} onClick={() => {
-                                        if (targetmailaddress.length > 0) {
-                                            sendfriendinvitation({
-                                                targetmailaddress,
-                                                token: auth.token
-                                            })
-                                        }
-                                    }}>
-                                        <SendIcon style={{ fontSize: "small" }} />
-                                    </IconButton>
+                                    <button onClick={() => {
+                                        sendfriendinvitation({
+                                            targetmailaddress,
+                                            token: auth.token
+                                        })
+                                    }}>send invitation</button>
                                 </div>
-                                {/* <button onClick={() => {
-                                    sendfriendinvitation({
-                                        targetmailaddress,
-                                        token: auth.token
-                                    })
-                                }}>send invitation</button> */}
+                                <div>
+                                    <Link href={"meeting"}>to meeting</Link>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {/* Messages */}
-                    <div className='h-full w-[80%] text-black'>
-                        <div className='flex flex-col h-full bg-[#272727] overflow-hidden'>
+                    <div className='h-full w-[75%] text-black'>
+                        <div className='flex flex-col h-full bg-teal-50'>
                             {
                                 activeFriend !== null ?
                                     <>
                                         {/* Header */}
-                                        <div className='flex text-[#d7d7d7] items-center justify-between w-full py-2 px-9 bg-[#272727]'>
+                                        <div className='flex items-center justify-between w-full p-3 bg-white'>
                                             <div className='flex items-center gap-5'>
-                                                <div className='w-10 h-10 overflow-hidden rounded-full'>
-                                                    {activeFriend.profile ? <img src={activeFriend?.profile} alt="" width={'48'} height={'48'} className='rounded-full' /> : <PersonIcon />}
+                                                <div className='w-12 h-12 overflow-hidden border rounded-full'>
+                                                    <img src={activeFriend?.profile || "/userAvatar.svg"} alt="" width={'48'} height={'48'} className='rounded-full' />
                                                 </div>
                                                 <div>
-                                                    <p>{activeFriend?.username}</p>
+                                                    <p><b>{activeFriend?.username}</b></p>
                                                 </div>
                                             </div>
                                             <div className='flex items-center gap-4 mr-3'>
-                                                <button>
-                                                    <IconButton style={{ color: "white" }}>
-                                                        <CallIcon />
-                                                    </IconButton>
+                                                <button className='mt-2 text-black'>
+                                                    <img src="/telephone.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
-                                                <button>
-                                                    <IconButton style={{ color: "white" }}>
-                                                        <VideocamIcon />
-                                                    </IconButton>
+                                                <button className='mt-2 text-black'>
+                                                    <img src="/videocall.svg" alt="Video Call" width={20} height={20} />
                                                 </button>
 
                                             </div>
                                         </div>
                                         {/* Chat */}
-                                        <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto' ref={chatContainerRef} style={{ backgroundImage: 'url("/backgroundimage.jpg")' }}>
+                                        <div className='flex flex-col-reverse flex-grow py-4 overflow-y-auto'>
                                             {
                                                 messagesArray.length != 0 && messagesArray.map((message: any, key: any) => {
                                                     return (
                                                         <div key={key} className={`${message.authorId._id === activeFriend.id ? 'text-left' : 'text-right'} m-3`}>
-                                                            {
-                                                                key == 0 ?
-                                                                    <motion.span
-                                                                        className={`${message.authorId._id !== activeFriend.id ? 'bg-[#035d4d] text-[#ccdedb]' : 'bg-[#383838] text-[#d7d7d7]'} p-3  rounded-md text-xs`}
-                                                                        animate={{ x: 5 }}
-                                                                    >
-                                                                        {message.content}
-                                                                    </motion.span>
-                                                                    :
-                                                                    <span className={`${message.authorId._id !== activeFriend.id ? 'bg-[#035d4d] text-[#ccdedb]' : 'bg-[#383838] text-[#d7d7d7]'} p-3  rounded-md text-xs`}>{message.content}</span>
-
-                                                            }
+                                                            <span className={`${message.authorId._id !== activeFriend.id ? 'bg-green-300' : 'bg-gray-200'} p-3`}>{message.content}</span>
                                                         </div>
                                                     )
                                                 })
                                             }
                                         </div>
                                         {/* Send Message */}
-                                        <div className='flex gap-4 items-center bg-[#272727]' style={{ padding: "4px 8px" }}>
-                                            <div className='relative'>
-                                                <button onClick={() => {
-                                                    setIsOpenEmojiPicker(true);
-                                                }}>
-                                                    <SentimentSatisfiedAltIcon style={{ color: "white" }} />
-                                                </button>
-                                                <motion.div
-                                                    id='emoji-picker'
-                                                    ref={emojiPickerRef}
-                                                    className='absolute'
-                                                    initial={{ y: -40, opacity: 0, display: "none" }}
-                                                    animate={isOpenEmojiPicker ? { y: -470, opacity: 1, display: "block" } : { y: -40, opacity: 0, display: "none" }}
-                                                >
-                                                    <Picker data={data} onEmojiSelect={(e: any) => {
-                                                        setmessage((prevmessage: any) => {
-                                                            return (
-                                                                prevmessage + e.native
-                                                            )
-                                                        })
-                                                    }} />
-                                                </motion.div>
-                                            </div>
-                                            <input type="text" id='sendMessageInput' className='flex-grow text-sm text-white bg-[#272727] border-none rounded outline-none' placeholder='Type a message' value={message} onChange={(e) => {
+                                        <div className='flex'>
+                                            <input type="text" className='flex-grow border-none rounded outline-none' placeholder='Type a message' onChange={(e) => {
                                                 setmessage(e.target.value)
-                                            }}
-
-                                                onKeyDown={(e: any) => {
-                                                    if (e.key === "Enter" && e.ctrlKey) {
-                                                        handlesendmessage();
-                                                    }
-                                                }}
-
-                                            />
+                                            }} />
                                             {/* <div className='flex-grow h-full bg-red-200'>
                                                 <Box
                                                     component="form"
@@ -621,21 +511,20 @@ export default function Page() {
                                                     />
                                                 </Box>
                                             </div> */}
-                                            <button onClick={() => { handlesendmessage() }}>
-                                                <IconButton style={{ color: "white", fontSize: "large" }}>
-                                                    <SendIcon />
-                                                </IconButton>
-                                            </button>
+                                            <button className='p-2' onClick={() => { handlesendmessage() }}>Send</button>
                                         </div>
                                     </>
                                     : (
                                         <>
-                                            <div className='h-full w-full flex flex-col p-3'>
-                                                <div className='text-white'>Select some person to chat</div>
-                                                <div className='flex-grow items-end justify-end flex'>
+                                            <div>
+                                                <div>seelectfdlhlfd</div>
+                                                <div>
                                                     <Webrtc />
                                                 </div>
+
+
                                             </div>
+
                                         </>
                                     )
 
