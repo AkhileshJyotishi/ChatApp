@@ -336,7 +336,7 @@ export default function Page() {
                                             }}
                                         /> */}
                                     </div>
-                                    {pendingfriendinvitations.length > 0 && <div className='absolute -top-3 -right-2 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
+                                    {pendingfriendinvitations.length > 0 && <div className='absolute -top-1 -right-1 text-xs text-white w-4 h-4 flex items-center justify-center bg-red-500 rounded-[50%]'>
                                         {pendingfriendinvitations.length}
                                     </div>}
                                     <div
